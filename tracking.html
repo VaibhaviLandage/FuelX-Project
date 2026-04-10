@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track Order | FuelX</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #f5b800;
+  --amber: #e07b00;
+  --bg: #07050a;
+  --surface: #0f0d14;
+  --surface2: #15131c;
+  --border: rgba(255,255,255,0.07);
+  --text: #f0f0f0;
+  --muted: #8a94a6;
+  --green-light: #22c55e;
+  --red: #ef4444;
+  --orange: #f97316;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  font-family:'Barlow',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  padding-bottom:90px;
+  position:relative;
+  overflow-x:hidden;
+}
+
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(220,30,30,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 80% at 0% 50%, rgba(80,20,120,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 30%, rgba(60,10,100,0.1) 0%, transparent 55%);
+  pointer-events:none; z-index:0;
+}
+
+/* ── NAVBAR ── */
+.navbar {
+  display:flex; align-items:center; gap:12px;
+  padding:0 20px; height:64px;
+  background:rgba(7,5,10,0.96);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:100;
+}
+.back-btn {
+  width:36px; height:36px;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  text-decoration:none; color:var(--text); font-size:16px;
+  transition:.2s; flex-shrink:0;
+}
+.back-btn:hover { border-color:var(--gold); background:var(--surface2); }
+.logo {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:26px; font-weight:800; letter-spacing:1.5px;
+  color:var(--text);
+}
+.logo-x { color:var(--gold); }
+.nav-label {
+  font-size:13px; color:var(--muted); font-weight:500;
+  margin-left:auto;
+}
+
+/* ── CONTENT WRAPPER ── */
+.content {
+  padding:20px;
+  display:flex; flex-direction:column; gap:14px;
+  position:relative; z-index:1;
+}
+
+/* Fade-up entry animations */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.content > * { animation:fadeUp 0.35s ease both; }
+.content > *:nth-child(1) { animation-delay:.05s; }
+.content > *:nth-child(2) { animation-delay:.10s; }
+.content > *:nth-child(3) { animation-delay:.15s; }
+.content > *:nth-child(4) { animation-delay:.20s; }
+.content > *:nth-child(5) { animation-delay:.25s; }
+.content > *:nth-child(6) { animation-delay:.30s; }
+
+/* ── ORDER BANNER ── */
+.order-banner {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:18px; padding:18px 20px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:relative; overflow:hidden;
+}
+.order-banner::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(245,184,0,0.3),transparent);
+}
+.order-id-label {
+  font-size:11px; color:var(--muted); font-weight:600;
+  text-transform:uppercase; letter-spacing:1.2px; margin-bottom:5px;
+}
+.order-id-val {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:22px; font-weight:800; color:var(--gold);
+}
+.status-pill {
+  padding:7px 16px; border-radius:999px;
+  font-size:12px; font-weight:700;
+  background:rgba(245,184,0,0.1);
+  border:1px solid rgba(245,184,0,0.25);
+  color:var(--gold); transition:all .3s;
+  font-family:'Barlow',sans-serif; letter-spacing:.3px;
+}
+.status-pill.green {
+  background:rgba(34,197,94,0.1);
+  border-color:rgba(34,197,94,0.3);
+  color:var(--green-light);
+}
+
+/* ── ETA CARD ── */
+.eta-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:18px; padding:18px 20px;
+  display:flex; align-items:center; gap:16px;
+  transition:opacity .4s;
+}
+.eta-icon {
+  width:50px; height:50px; border-radius:14px;
+  background:rgba(245,184,0,0.08);
+  border:1px solid rgba(245,184,0,0.18);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.eta-icon svg { width:24px; height:24px; }
+.eta-label {
+  font-size:11px; color:var(--muted); font-weight:600;
+  text-transform:uppercase; letter-spacing:.8px; margin-bottom:4px;
+}
+.eta-val {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:24px; font-weight:800; color:var(--text); line-height:1;
+}
+.eta-sub { font-size:12px; color:var(--muted); margin-top:3px; }
+
+/* ── SECTION TITLE ── */
+.section-title {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px; font-weight:700;
+  color:var(--muted); text-transform:uppercase; letter-spacing:1.5px;
+  padding:6px 0 2px;
+}
+
+/* ── TIMELINE ── */
+.timeline-wrap {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:18px; overflow:hidden;
+}
+.timeline-step {
+  display:flex; align-items:flex-start; gap:14px;
+  padding:18px 20px; border-bottom:1px solid rgba(255,255,255,0.04);
+  position:relative;
+}
+.timeline-step:last-child { border-bottom:none; }
+.timeline-step.is-active::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:3px; background:linear-gradient(180deg,var(--gold),var(--amber));
+  border-radius:0;
+}
+
+.step-left { display:flex; flex-direction:column; align-items:center; flex-shrink:0; }
+
+.step-dot {
+  width:36px; height:36px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; transition:all .3s;
+}
+.step-dot svg { width:16px; height:16px; }
+
+.step-dot.done {
+  background:rgba(245,184,0,0.12);
+  border:2px solid var(--gold);
+}
+.step-dot.done svg { stroke:var(--gold); }
+
+.step-dot.active {
+  background:rgba(224,123,0,0.15);
+  border:2px solid var(--amber);
+  animation:pulseDot 1.6s ease-in-out infinite;
+}
+.step-dot.active svg { stroke:var(--gold); }
+
+.step-dot.pending {
+  background:rgba(255,255,255,0.03);
+  border:2px solid rgba(255,255,255,0.08);
+}
+.step-dot.pending svg { stroke:rgba(255,255,255,0.18); }
+
+@keyframes pulseDot {
+  0%,100% { box-shadow:0 0 0 0 rgba(245,184,0,0.35); }
+  50%      { box-shadow:0 0 0 9px rgba(245,184,0,0); }
+}
+
+.step-connector {
+  width:2px; flex:1; min-height:24px; margin-top:5px; border-radius:2px;
+  transition:background .5s;
+}
+.step-connector.done { background:linear-gradient(180deg,var(--gold),var(--amber)); }
+.step-connector.pending { background:rgba(255,255,255,0.05); }
+
+.step-body { flex:1; padding-top:7px; }
+
+.step-name {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:17px; font-weight:700; margin-bottom:3px; transition:color .3s;
+  letter-spacing:.3px;
+}
+.step-name.done   { color:var(--gold); }
+.step-name.active { color:#ffd54f; }
+.step-name.pending { color:rgba(255,255,255,0.2); }
+
+.step-desc {
+  font-size:13px; color:var(--muted); line-height:1.5;
+}
+.step-desc.pending-desc { color:rgba(255,255,255,0.15); }
+
+.step-time {
+  font-size:12px; color:rgba(245,184,0,0.5); margin-top:5px; font-weight:600;
+}
+
+/* ── AGENT CARD ── */
+.agent-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:18px; padding:18px 20px;
+  display:flex; align-items:center; gap:14px; transition:opacity .4s;
+}
+.agent-avatar {
+  width:48px; height:48px; border-radius:50%;
+  background:rgba(245,184,0,0.08);
+  border:2px solid rgba(245,184,0,0.25);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:16px; font-weight:800; color:var(--gold); flex-shrink:0;
+}
+.agent-info { flex:1; }
+.agent-name {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px; font-weight:700; color:var(--text); margin-bottom:3px;
+  letter-spacing:.3px;
+}
+.agent-sub { font-size:12px; color:var(--muted); }
+.agent-btns { display:flex; gap:8px; }
+.agent-btn {
+  width:38px; height:38px; border-radius:10px;
+  background:var(--surface2); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:.2s;
+}
+.agent-btn:hover { border-color:var(--gold); background:rgba(245,184,0,0.08); }
+.agent-btn svg { width:16px; height:16px; stroke:var(--muted); transition:.2s; }
+.agent-btn:hover svg { stroke:var(--gold); }
+
+/* ── INFO CARD ── */
+.info-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:18px; overflow:hidden;
+  position:relative;
+}
+.info-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(245,184,0,0.25),transparent);
+}
+.info-title {
+  padding:14px 20px; background:rgba(255,255,255,0.02);
+  border-bottom:1px solid var(--border);
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:15px; font-weight:700; color:var(--gold); letter-spacing:.5px;
+}
+.info-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:13px 20px; border-bottom:1px solid rgba(255,255,255,0.04);
+  font-size:14px;
+}
+.info-row:last-child { border-bottom:none; }
+.info-row .lbl { color:var(--muted); font-weight:500; }
+.info-row .val { color:var(--text); font-weight:600; }
+.info-row .val.gold {
+  font-family:'Barlow Condensed',sans-serif;
+  color:var(--gold); font-weight:800; font-size:18px;
+}
+
+/* ── SIMULATE BAR ── */
+.sim-wrap {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:18px; padding:16px 20px;
+}
+.sim-label {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:12px; color:var(--muted); font-weight:700;
+  text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;
+}
+.sim-btns { display:flex; gap:8px; flex-wrap:wrap; }
+.sim-btn {
+  padding:8px 14px; font-size:13px; font-weight:600;
+  border-radius:10px; border:1px solid var(--border);
+  background:var(--surface2); color:var(--muted); cursor:pointer;
+  transition:all .2s; font-family:'Barlow',sans-serif;
+}
+.sim-btn:hover { border-color:rgba(245,184,0,0.3); color:var(--text); }
+.sim-btn.active {
+  background:rgba(245,184,0,0.1);
+  border-color:rgba(245,184,0,0.4);
+  color:var(--gold);
+}
+
+/* ── BOTTOM BAR ── */
+.bottom-bar {
+  position:fixed; bottom:0; left:0; right:0;
+  padding:16px 20px;
+  background:linear-gradient(to top, var(--bg) 70%, transparent);
+  z-index:100;
+}
+.home-btn {
+  width:100%; padding:15px; border:none; border-radius:12px;
+  background:linear-gradient(135deg, var(--gold), var(--amber));
+  color:#000; font-family:'Barlow',sans-serif;
+  font-size:15px; font-weight:700;
+  cursor:pointer; transition:.2s; letter-spacing:.3px;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.home-btn:hover { opacity:.88; transform:translateY(-2px); box-shadow:0 12px 32px rgba(245,184,0,0.25); }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <a href="payment.html" class="back-btn">←</a>
+  <div class="logo">FUEL<span class="logo-x">X</span></div>
+  <div class="nav-label">Track Order</div>
+</div>
+
+<div class="content">
+
+  <!-- Order Banner -->
+  <div class="order-banner">
+    <div>
+      <div class="order-id-label">Order ID</div>
+      <div class="order-id-val" id="orderId">#FX-00000000</div>
+    </div>
+    <div class="status-pill" id="statusPill">Out for delivery</div>
+  </div>
+
+  <!-- ETA -->
+  <div class="eta-card" id="etaCard">
+    <div class="eta-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+    </div>
+    <div>
+      <div class="eta-label">Estimated Arrival</div>
+      <div class="eta-val" id="etaVal">~20 min away</div>
+      <div class="eta-sub" id="etaSub">Delivery agent is on the way</div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="section-title">Delivery Status</div>
+  <div class="timeline-wrap" id="timeline"></div>
+
+  <!-- Agent -->
+  <div class="section-title">Delivery Agent</div>
+  <div class="agent-card" id="agentCard">
+    <div class="agent-avatar">RK</div>
+    <div class="agent-info">
+      <div class="agent-name">Ravi Kumar</div>
+      <div class="agent-sub">Bike &middot; MH-09 AX 2231</div>
+    </div>
+    <div class="agent-btns">
+      <div class="agent-btn" title="Call">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+          <path d="M22 16.92V19.92a2 2 0 01-2.18 2A19.79 19.79 0 013.08 5.18 2 2 0 015.07 3h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L9.09 10.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 17z"/>
+        </svg>
+      </div>
+      <div class="agent-btn" title="Message">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Info -->
+  <div class="section-title">Order Summary</div>
+  <div class="info-card">
+    <div class="info-title">🧾 Payment Details</div>
+    <div class="info-row"><span class="lbl">⛽ Fuel Type</span><span class="val" id="infoFuel">-</span></div>
+    <div class="info-row"><span class="lbl">📊 Quantity</span><span class="val" id="infoQty">-</span></div>
+    <div class="info-row"><span class="lbl">🏪 Pump</span><span class="val" id="infoPump">-</span></div>
+    <div class="info-row"><span class="lbl">🚗 Vehicle</span><span class="val" id="infoVehicle">-</span></div>
+    <div class="info-row"><span class="lbl">💰 Amount Paid</span><span class="val gold" id="infoAmount">-</span></div>
+  </div>
+
+  <!-- Simulate (demo) -->
+  <div class="sim-wrap">
+    <div class="sim-label">Simulate progress (demo only)</div>
+    <div class="sim-btns" id="simBtns"></div>
+  </div>
+
+</div>
+
+<!-- Bottom Button -->
+<div class="bottom-bar">
+  <button class="home-btn" onclick="window.location.href='dashboard.html'">
+    🏠 Back to Home
+  </button>
+</div>
+
+<script>
+var steps = [
+  {
+    key:'placed',
+    name:'Order Placed',
+    desc:'Your order is confirmed and payment received successfully.',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>'
+  },
+  {
+    key:'preparing',
+    name:'Preparing Fuel',
+    desc:'FuelX team is loading your order onto the delivery vehicle.',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>'
+  },
+  {
+    key:'picked',
+    name:'Picked Up',
+    desc:'Ravi Kumar has your fuel and is heading to your location.',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>'
+  },
+  {
+    key:'nearby',
+    name:'Agent Nearby',
+    desc:'Your delivery agent is less than 1 km from your location!',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0112 2a8 8 0 018 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>'
+  },
+  {
+    key:'delivered',
+    name:'Delivered',
+    desc:'Fuel delivered successfully. Thank you for choosing FuelX! ⚡',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>'
+  }
+];
+
+var etas = ['~28 min away','~20 min away','~12 min away','~3 min away','Delivered!'];
+var etaSubs = ['Order is being confirmed','Fuel is being loaded','Delivery agent on the way','Almost there — hold on!','Your fuel has arrived'];
+var statusLabels = ['Order Placed','Preparing','Out for Delivery','Almost There!','Delivered ✓'];
+
+var current = 2;
+
+var now = new Date();
+function fmtTime(min) {
+  var d = new Date(now.getTime() + min*60000);
+  return d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+}
+var times = [fmtTime(0),fmtTime(8),fmtTime(16),fmtTime(24),fmtTime(30)];
+
+function render() {
+  var tl = document.getElementById('timeline');
+  tl.innerHTML = '';
+
+  steps.forEach(function(s, i) {
+    var state = i < current ? 'done' : i === current ? 'active' : 'pending';
+    var isLast = i === steps.length - 1;
+    var div = document.createElement('div');
+    div.className = 'timeline-step' + (state === 'active' ? ' is-active' : '');
+
+    var conn = !isLast
+      ? '<div class="step-connector ' + (i < current ? 'done' : 'pending') + '" style="min-height:26px;"></div>'
+      : '';
+
+    var descClass = state === 'pending' ? 'step-desc pending-desc' : 'step-desc';
+    var descText  = state !== 'pending' ? s.desc : 'Waiting...';
+
+    div.innerHTML =
+      '<div class="step-left">' +
+        '<div class="step-dot ' + state + '">' + s.icon + '</div>' +
+        conn +
+      '</div>' +
+      '<div class="step-body">' +
+        '<div class="step-name ' + state + '">' + s.name + '</div>' +
+        '<div class="' + descClass + '">' + descText + '</div>' +
+        (state !== 'pending' ? '<div class="step-time">' + times[i] + '</div>' : '') +
+      '</div>';
+
+    tl.appendChild(div);
+  });
+
+  document.getElementById('etaVal').textContent = etas[current];
+  document.getElementById('etaSub').textContent = etaSubs[current];
+
+  var pill = document.getElementById('statusPill');
+  pill.textContent = statusLabels[current];
+  pill.className = current === steps.length - 1 ? 'status-pill green' : 'status-pill';
+
+  document.getElementById('etaCard').style.opacity = current === steps.length - 1 ? '0.4' : '1';
+  document.getElementById('agentCard').style.opacity = current >= 2 ? '1' : '0.3';
+
+  document.querySelectorAll('.sim-btn').forEach(function(b, i) {
+    b.classList.toggle('active', i === current);
+  });
+}
+
+function buildSim() {
+  var c = document.getElementById('simBtns');
+  steps.forEach(function(s, i) {
+    var b = document.createElement('button');
+    b.className = 'sim-btn';
+    b.textContent = s.name;
+    b.onclick = function() { current = i; render(); };
+    c.appendChild(b);
+  });
+}
+
+// Read URL params — same pattern as payment.html
+var P = new URLSearchParams(window.location.search);
+document.getElementById('orderId').textContent    = '#' + (P.get('txn_id') || 'FX-' + Date.now().toString().slice(-8).toUpperCase());
+document.getElementById('infoFuel').textContent    = P.get('fuel')    || 'Petrol';
+document.getElementById('infoQty').textContent     = (P.get('qty')    || '20') + ' L';
+document.getElementById('infoPump').textContent    = P.get('pump')    || '-';
+document.getElementById('infoVehicle').textContent = P.get('vehicle') || '-';
+document.getElementById('infoAmount').textContent  = '₹' + (P.get('amount') || '0');
+
+buildSim();
+render();
+</script>
+</body>
+</html>

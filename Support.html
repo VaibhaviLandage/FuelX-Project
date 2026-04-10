@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support | FuelX</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #f5b800;
+  --amber: #e07b00;
+  --bg: #07050a;
+  --surface: #0f0d14;
+  --surface2: #15131c;
+  --border: rgba(255,255,255,0.07);
+  --text: #f0f0f0;
+  --muted: #8a94a6;
+  --green: #22c55e;
+  --red: #ef4444;
+  --orange: #f97316;
+  --blue: #3b82f6;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Barlow',sans-serif;
+  background:var(--bg); color:var(--text);
+  min-height:100vh; padding-bottom:90px; overflow-x:hidden; position:relative;
+}
+body::before {
+  content:''; position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(220,30,30,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 80% at 0% 50%, rgba(80,20,120,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 30%, rgba(60,10,100,0.1) 0%, transparent 55%);
+  pointer-events:none; z-index:0;
+}
+
+/* ── NAVBAR ── */
+.navbar {
+  display:flex; align-items:center; gap:12px;
+  padding:0 20px; height:64px;
+  background:rgba(7,5,10,0.96); backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border); position:sticky; top:0; z-index:100;
+}
+.back-btn {
+  width:36px; height:36px; background:var(--surface); border:1px solid var(--border);
+  border-radius:10px; display:flex; align-items:center; justify-content:center;
+  text-decoration:none; color:var(--text); font-size:16px; transition:.2s; flex-shrink:0;
+}
+.back-btn:hover { border-color:var(--gold); background:var(--surface2); }
+.logo { font-family:'Barlow Condensed',sans-serif; font-size:26px; font-weight:800; letter-spacing:1.5px; color:var(--text); }
+.logo-x { color:var(--gold); }
+.nav-label { font-size:13px; color:var(--muted); font-weight:500; margin-left:auto; }
+
+/* ── CONTENT ── */
+.content { padding:20px; display:flex; flex-direction:column; gap:16px; position:relative; z-index:1; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.content > * { animation:fadeUp .35s ease both; }
+.content > *:nth-child(1){animation-delay:.05s}
+.content > *:nth-child(2){animation-delay:.10s}
+.content > *:nth-child(3){animation-delay:.15s}
+.content > *:nth-child(4){animation-delay:.20s}
+.content > *:nth-child(5){animation-delay:.25s}
+.content > *:nth-child(6){animation-delay:.30s}
+.content > *:nth-child(7){animation-delay:.35s}
+
+/* ── SECTION TITLE ── */
+.section-title {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px; font-weight:700; color:var(--muted);
+  text-transform:uppercase; letter-spacing:1.5px; padding:4px 0 2px;
+}
+
+/* ── EMERGENCY BANNER ── */
+.emergency-banner {
+  background:rgba(239,68,68,0.07); border:1.5px solid rgba(239,68,68,0.25);
+  border-radius:18px; padding:18px 20px;
+  display:flex; align-items:center; gap:16px;
+  position:relative; overflow:hidden; cursor:pointer; transition:.2s;
+}
+.emergency-banner:hover { background:rgba(239,68,68,0.12); border-color:rgba(239,68,68,0.4); }
+.emergency-banner::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(239,68,68,0.5),transparent); }
+.emergency-icon {
+  width:52px; height:52px; border-radius:50%;
+  background:rgba(239,68,68,0.12); border:2px solid rgba(239,68,68,0.3);
+  display:flex; align-items:center; justify-content:center;
+  font-size:24px; flex-shrink:0; animation:emergencyPulse 2s ease-in-out infinite;
+}
+@keyframes emergencyPulse { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.3)} 50%{box-shadow:0 0 0 10px rgba(239,68,68,0)} }
+.emergency-info { flex:1; }
+.emergency-title { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:800; color:var(--red); margin-bottom:3px; letter-spacing:.3px; }
+.emergency-sub { font-size:13px; color:var(--muted); }
+.emergency-arrow { font-size:20px; color:var(--red); opacity:.6; }
+
+/* ── QUICK CONTACT CARDS ── */
+.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.contact-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:16px; padding:18px 16px;
+  display:flex; flex-direction:column; gap:10px;
+  cursor:pointer; transition:all .2s; position:relative; overflow:hidden;
+}
+.contact-card:hover { border-color:rgba(245,184,0,0.25); background:var(--surface2); transform:translateY(-2px); }
+.contact-card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(245,184,0,0.2),transparent); }
+.contact-icon {
+  width:44px; height:44px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center; font-size:20px;
+}
+.icon-call    { background:rgba(34,197,94,0.1);  border:1px solid rgba(34,197,94,0.2); }
+.icon-whatsapp{ background:rgba(34,197,94,0.1);  border:1px solid rgba(34,197,94,0.2); }
+.icon-chat    { background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.2); }
+.icon-email   { background:rgba(245,184,0,0.1);  border:1px solid rgba(245,184,0,0.2); }
+.contact-name { font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; color:var(--text); letter-spacing:.3px; }
+.contact-desc { font-size:11px; color:var(--muted); line-height:1.4; }
+.contact-tag {
+  display:inline-block; padding:3px 9px; border-radius:999px;
+  font-size:10px; font-weight:700; letter-spacing:.3px; align-self:flex-start;
+}
+.tag-live    { background:rgba(34,197,94,0.12); color:var(--green); border:1px solid rgba(34,197,94,0.25); }
+.tag-fast    { background:rgba(59,130,246,0.12); color:var(--blue);  border:1px solid rgba(59,130,246,0.25); }
+.tag-24x7    { background:rgba(245,184,0,0.10);  color:var(--gold);  border:1px solid rgba(245,184,0,0.25); }
+
+/* ── PROBLEM CATEGORIES ── */
+.problem-grid { display:flex; flex-direction:column; gap:8px; }
+
+.problem-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:16px; padding:16px 18px;
+  display:flex; align-items:center; gap:14px;
+  cursor:pointer; transition:all .2s; position:relative; overflow:hidden;
+}
+.problem-card:hover { border-color:rgba(245,184,0,0.2); background:var(--surface2); }
+.problem-card.selected { border-color:var(--gold); background:rgba(245,184,0,0.04); }
+.problem-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:transparent; transition:.2s; }
+.problem-card.selected::before { background:linear-gradient(180deg,var(--gold),var(--amber)); }
+
+.problem-icon {
+  width:44px; height:44px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; flex-shrink:0;
+}
+.problem-info { flex:1; }
+.problem-name { font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; color:var(--text); margin-bottom:2px; letter-spacing:.3px; }
+.problem-desc { font-size:12px; color:var(--muted); }
+.problem-radio {
+  width:22px; height:22px; border-radius:50%;
+  border:2px solid var(--border); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--surface2); transition:.2s;
+}
+.problem-card.selected .problem-radio { border-color:var(--gold); background:rgba(245,184,0,0.12); }
+.problem-card.selected .problem-radio::after { content:'✓'; font-size:11px; color:var(--gold); font-weight:800; }
+
+/* ── DESCRIBE ISSUE ── */
+.describe-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:18px; padding:18px 20px; position:relative; overflow:hidden;
+}
+.describe-card::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,rgba(245,184,0,0.25),transparent); }
+.describe-label { font-family:'Barlow Condensed',sans-serif; font-size:12px; color:var(--muted); font-weight:700; text-transform:uppercase; letter-spacing:.8px; display:block; margin-bottom:10px; }
+.describe-textarea {
+  width:100%; background:var(--surface2); border:1px solid var(--border);
+  border-radius:12px; padding:14px 16px; color:var(--text);
+  font-family:'Barlow',sans-serif; font-size:14px; resize:none; outline:none;
+  transition:border-color .2s; min-height:90px; line-height:1.6;
+}
+.describe-textarea::placeholder { color:var(--muted); }
+.describe-textarea:focus { border-color:rgba(245,184,0,0.4); }
+
+/* order id field */
+.order-id-field {
+  width:100%; background:var(--surface2); border:1px solid var(--border);
+  border-radius:12px; padding:12px 16px; color:var(--text);
+  font-family:'Barlow',sans-serif; font-size:14px; outline:none;
+  transition:border-color .2s; margin-bottom:12px;
+}
+.order-id-field::placeholder { color:var(--muted); }
+.order-id-field:focus { border-color:rgba(245,184,0,0.4); }
+
+/* ── SUBMIT BUTTON ── */
+.submit-btn {
+  width:100%; padding:15px; border:none; border-radius:12px;
+  background:linear-gradient(135deg,var(--gold),var(--amber));
+  color:#000; font-family:'Barlow',sans-serif;
+  font-size:15px; font-weight:700; cursor:pointer; transition:.2s; letter-spacing:.3px;
+}
+.submit-btn:hover:not(:disabled) { opacity:.88; transform:translateY(-2px); box-shadow:0 12px 32px rgba(245,184,0,0.25); }
+.submit-btn:disabled { opacity:.25; cursor:not-allowed; transform:none; box-shadow:none; }
+
+/* ── FAQ ── */
+.faq-list { display:flex; flex-direction:column; gap:8px; }
+.faq-item {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:14px; overflow:hidden; cursor:pointer; transition:border-color .2s;
+}
+.faq-item:hover { border-color:rgba(245,184,0,0.2); }
+.faq-item.open { border-color:rgba(245,184,0,0.25); }
+.faq-q {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:15px 18px; font-size:14px; font-weight:600; color:var(--text); gap:12px;
+}
+.faq-arrow { font-size:11px; color:var(--muted); transition:transform .3s; flex-shrink:0; }
+.faq-item.open .faq-arrow { transform:rotate(180deg); }
+.faq-a {
+  max-height:0; overflow:hidden; transition:max-height .35s ease;
+  font-size:13px; color:var(--muted); line-height:1.7;
+}
+.faq-item.open .faq-a { max-height:200px; }
+.faq-a-inner { padding:0 18px 15px; }
+
+/* ── SUCCESS SCREEN ── */
+.success-screen {
+  position:fixed; inset:0; background:var(--bg);
+  display:none; flex-direction:column;
+  align-items:center; justify-content:center;
+  z-index:600; padding:30px; text-align:center;
+}
+.success-screen.show { display:flex; }
+.success-circle {
+  width:100px; height:100px; border-radius:50%;
+  background:rgba(34,197,94,0.1); border:3px solid var(--green);
+  display:flex; align-items:center; justify-content:center;
+  font-size:46px; margin-bottom:22px;
+  animation:popIn .4s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+.success-title { font-family:'Barlow Condensed',sans-serif; font-size:30px; font-weight:800; color:var(--green); margin-bottom:8px; }
+.success-sub { font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:6px; }
+.ticket-box {
+  display:flex; align-items:center; gap:8px;
+  padding:10px 20px; margin:12px 0 28px;
+  background:rgba(245,184,0,0.08); border:1px solid rgba(245,184,0,0.2);
+  border-radius:12px;
+}
+.ticket-label { font-size:12px; color:var(--muted); }
+.ticket-id { font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:800; color:var(--gold); }
+.what-next { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:18px; overflow:hidden; margin-bottom:24px; }
+.what-next-title { padding:13px 20px; background:rgba(255,255,255,0.02); border-bottom:1px solid var(--border); font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; text-align:left; }
+.next-row { display:flex; align-items:center; gap:14px; padding:14px 20px; border-bottom:1px solid rgba(255,255,255,0.03); }
+.next-row:last-child { border-bottom:none; }
+.next-num { width:28px; height:28px; border-radius:50%; background:rgba(245,184,0,0.1); border:1px solid rgba(245,184,0,0.25); display:flex; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:800; color:var(--gold); flex-shrink:0; }
+.next-text { font-size:13px; color:var(--muted); line-height:1.4; }
+.next-text b { color:var(--text); font-weight:600; }
+.go-home-btn { width:100%; padding:15px; border:none; border-radius:12px; background:linear-gradient(135deg,var(--gold),var(--amber)); color:#000; font-family:'Barlow',sans-serif; font-size:15px; font-weight:700; cursor:pointer; transition:.2s; }
+.go-home-btn:hover { opacity:.88; transform:translateY(-2px); }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position:fixed; bottom:0; left:0; right:0;
+  background:rgba(7,5,10,0.97); border-top:1px solid var(--border);
+  display:flex; justify-content:space-around; padding:10px 0 14px;
+  backdrop-filter:blur(24px); z-index:100;
+}
+.nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; opacity:.3; transition:opacity .2s; padding:0 14px; }
+.nav-item.active { opacity:1; }
+.nav-item:hover  { opacity:.65; }
+.nav-icon-wrap { font-size:20px; line-height:1; }
+.nav-lbl { font-size:10px; font-weight:600; letter-spacing:.3px; color:var(--muted); }
+.nav-item.active .nav-lbl { color:var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <a href="dashboard.html" class="back-btn">←</a>
+  <div class="logo">FUEL<span class="logo-x">X</span></div>
+  <div class="nav-label">Support</div>
+</div>
+
+<div class="content">
+
+  <!-- Emergency Call Banner -->
+  <div class="emergency-banner" onclick="window.location.href='tel:+911800000000'">
+    <div class="emergency-icon">🚨</div>
+    <div class="emergency-info">
+      <div class="emergency-title">Emergency? Call Now</div>
+      <div class="emergency-sub">24/7 helpline · 1800-000-0000 (Toll Free)</div>
+    </div>
+    <div class="emergency-arrow">→</div>
+  </div>
+
+  <!-- Quick Contact -->
+  <div class="section-title">Contact Us</div>
+  <div class="contact-grid">
+
+    <div class="contact-card" onclick="window.location.href='tel:+911800000000'">
+      <div class="contact-icon icon-call">📞</div>
+      <div class="contact-name">Call Us</div>
+      <div class="contact-desc">Speak directly with our support team</div>
+      <span class="contact-tag tag-live">● Live</span>
+    </div>
+
+    <div class="contact-card" onclick="window.location.href='https://wa.me/911234567890'">
+      <div class="contact-icon icon-whatsapp">💬</div>
+      <div class="contact-name">WhatsApp</div>
+      <div class="contact-desc">Chat with us on WhatsApp instantly</div>
+      <span class="contact-tag tag-fast">⚡ Fast</span>
+    </div>
+
+    <div class="contact-card" onclick="openChat()">
+      <div class="contact-icon icon-chat">🤖</div>
+      <div class="contact-name">Live Chat</div>
+      <div class="contact-desc">Chat with our support bot now</div>
+      <span class="contact-tag tag-live">● Online</span>
+    </div>
+
+    <div class="contact-card" onclick="window.location.href='mailto:support@fuelx.in'">
+      <div class="contact-icon icon-email">📧</div>
+      <div class="contact-name">Email Us</div>
+      <div class="contact-desc">support@fuelx.in — reply in 2 hrs</div>
+      <span class="contact-tag tag-24x7">24/7</span>
+    </div>
+
+  </div>
+
+  <!-- Report a Problem -->
+  <div class="section-title">Report a Delivery Problem</div>
+
+  <div class="problem-grid" id="problemGrid">
+
+    <div class="problem-card" onclick="selectProblem(this,'Fuel quantity is less than ordered')">
+      <div class="problem-icon" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2)">⚡</div>
+      <div class="problem-info">
+        <div class="problem-name">Wrong Quantity</div>
+        <div class="problem-desc">Received less fuel than ordered</div>
+      </div>
+      <div class="problem-radio"></div>
+    </div>
+
+    <div class="problem-card" onclick="selectProblem(this,'Received wrong fuel type')">
+      <div class="problem-icon" style="background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.2)">🛢️</div>
+      <div class="problem-info">
+        <div class="problem-name">Wrong Fuel Type</div>
+        <div class="problem-desc">Petrol given instead of diesel or vice versa</div>
+      </div>
+      <div class="problem-radio"></div>
+    </div>
+
+    <div class="problem-card" onclick="selectProblem(this,'Delivery agent misbehaved')">
+      <div class="problem-icon" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2)">😠</div>
+      <div class="problem-info">
+        <div class="problem-name">Agent Misbehaved</div>
+        <div class="problem-desc">Rude or unprofessional behaviour</div>
+      </div>
+      <div class="problem-radio"></div>
+    </div>
+
+    <div class="problem-card" onclick="selectProblem(this,'Fuel spilled during delivery')">
+      <div class="problem-icon" style="background:rgba(245,184,0,0.1);border:1px solid rgba(245,184,0,0.2)">💧</div>
+      <div class="problem-info">
+        <div class="problem-name">Fuel Spill</div>
+        <div class="problem-desc">Fuel was spilled during delivery</div>
+      </div>
+      <div class="problem-radio"></div>
+    </div>
+
+    <div class="problem-card" onclick="selectProblem(this,'Order is delayed beyond estimated time')">
+      <div class="problem-icon" style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2)">⏰</div>
+      <div class="problem-info">
+        <div class="problem-name">Very Late Delivery</div>
+        <div class="problem-desc">Order delayed beyond estimated time</div>
+      </div>
+      <div class="problem-radio"></div>
+    </div>
+
+    <div class="problem-card" onclick="selectProblem(this,'Overcharged or payment issue')">
+      <div class="problem-icon" style="background:rgba(245,184,0,0.1);border:1px solid rgba(245,184,0,0.2)">💰</div>
+      <div class="problem-info">
+        <div class="problem-name">Payment Issue</div>
+        <div class="problem-desc">Overcharged or wrong amount deducted</div>
+      </div>
+      <div class="problem-radio"></div>
+    </div>
+
+    <div class="problem-card" onclick="selectProblem(this,'Fuel quality seems poor or contaminated')">
+      <div class="problem-icon" style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2)">🔬</div>
+      <div class="problem-info">
+        <div class="problem-name">Poor Fuel Quality</div>
+        <div class="problem-desc">Fuel seems dirty or contaminated</div>
+      </div>
+      <div class="problem-radio"></div>
+    </div>
+
+    <div class="problem-card" onclick="selectProblem(this,'Other issue not listed above')">
+      <div class="problem-icon" style="background:rgba(138,148,166,0.1);border:1px solid rgba(138,148,166,0.2)">❓</div>
+      <div class="problem-info">
+        <div class="problem-name">Other Issue</div>
+        <div class="problem-desc">Something else went wrong</div>
+      </div>
+      <div class="problem-radio"></div>
+    </div>
+
+  </div>
+
+  <!-- Describe + Order ID -->
+  <div class="describe-card">
+    <label class="describe-label">Order ID (optional)</label>
+    <input type="text" class="order-id-field" id="orderIdField" placeholder="e.g. FX84729301 — leave blank if unknown">
+    <label class="describe-label">Describe your problem</label>
+    <textarea class="describe-textarea" id="describeText" placeholder="Tell us exactly what happened — the more detail, the faster we can help you..."></textarea>
+  </div>
+
+  <!-- Submit -->
+  <button class="submit-btn" id="submitBtn" onclick="submitReport()" disabled>Select a Problem to Submit</button>
+
+  <!-- FAQ -->
+  <div class="section-title">Common Questions</div>
+  <div class="faq-list" id="faqList"></div>
+
+</div>
+
+<!-- Success Screen -->
+<div class="success-screen" id="successScreen">
+  <div class="success-circle">✅</div>
+  <div class="success-title">Complaint Raised!</div>
+  <div class="success-sub">Our team has received your report.<br>We'll resolve this as soon as possible.</div>
+  <div class="ticket-box">
+    <div class="ticket-label">Ticket ID</div>
+    <div class="ticket-id" id="ticketId">TKT-000000</div>
+  </div>
+  <div class="what-next">
+    <div class="what-next-title">What Happens Next</div>
+    <div class="next-row"><div class="next-num">1</div><div class="next-text"><b>Team Reviews</b> your complaint within 30 minutes</div></div>
+    <div class="next-row"><div class="next-num">2</div><div class="next-text"><b>Agent Called</b> — delivery agent is contacted for clarification</div></div>
+    <div class="next-row"><div class="next-num">3</div><div class="next-text"><b>Resolution</b> provided within 2–4 hours via call or WhatsApp</div></div>
+    <div class="next-row"><div class="next-num">4</div><div class="next-text"><b>Refund</b> processed if applicable within 3–5 business days</div></div>
+  </div>
+  <button class="go-home-btn" onclick="window.location.href='dashboard.html'">🏠 Back to Home</button>
+</div>
+
+<!-- Bottom Nav -->
+<nav class="bottom-nav">
+  <div class="nav-item" onclick="location.href='dashboard.html'"><span class="nav-icon-wrap">🏠</span><span class="nav-lbl">Home</span></div>
+  <div class="nav-item" onclick="location.href='request.html'"><span class="nav-icon-wrap">⛽</span><span class="nav-lbl">Request</span></div>
+  <div class="nav-item" onclick="location.href='orders.html'"><span class="nav-icon-wrap">📋</span><span class="nav-lbl">Orders</span></div>
+  <div class="nav-item" onclick="location.href='profile.html'"><span class="nav-icon-wrap">👤</span><span class="nav-lbl">Profile</span></div>
+</nav>
+
+<script>
+var FAQ = [
+  { q:'What if I received less fuel than I ordered?', a:'Select "Wrong Quantity" above and submit a report. Our team will verify with the delivery agent and arrange a top-up delivery or refund within 24 hours.' },
+  { q:'My vehicle engine is making noise after delivery — what do I do?', a:'This could be a fuel quality issue. Immediately stop using the vehicle, raise a "Poor Fuel Quality" complaint, and call our emergency helpline. We will arrange a full refund and cover towing if needed.' },
+  { q:'The agent asked for extra cash — is that normal?', a:'No. FuelX agents should never ask for extra money. All payments are done through the app. Raise a complaint immediately with the agent\'s name or vehicle number.' },
+  { q:'My order shows Delivered but fuel was not received?', a:'Report it as "Wrong Quantity" and mention in the description that you received nothing. Our team will contact the agent and review GPS delivery proof within 2 hours.' },
+  { q:'How long does a refund take?', a:'Refunds are processed within 3–5 business days to your original payment method. UPI refunds may arrive sooner, within 24 hours.' },
+  { q:'Can I report a problem after delivery is complete?', a:'Yes, you can raise a complaint within 24 hours of delivery. After 24 hours, contact us via WhatsApp or email for further assistance.' }
+];
+
+// Build FAQ
+var faqHtml = FAQ.map(function(f, i){
+  return '<div class="faq-item" id="faq-'+i+'" onclick="toggleFaq('+i+')">'
+    +'<div class="faq-q"><span>'+f.q+'</span><span class="faq-arrow">▼</span></div>'
+    +'<div class="faq-a"><div class="faq-a-inner">'+f.a+'</div></div>'
+    +'</div>';
+}).join('');
+document.getElementById('faqList').innerHTML = faqHtml;
+
+function toggleFaq(i) {
+  var el = document.getElementById('faq-'+i);
+  el.classList.toggle('open');
+}
+
+// Problem selection
+var selectedProblem = null;
+function selectProblem(card, problem) {
+  selectedProblem = problem;
+  document.querySelectorAll('.problem-card').forEach(function(c){ c.classList.remove('selected'); });
+  card.classList.add('selected');
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = false;
+  btn.textContent = 'Submit Complaint →';
+}
+
+// Submit
+async function submitReport() {
+  if (!selectedProblem) return;
+  var btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  var orderId  = document.getElementById('orderIdField').value.trim();
+  var describe = document.getElementById('describeText').value.trim();
+  var ticketId = 'TKT-' + Date.now().toString().slice(-6);
+
+  try {
+    await fetch('http://localhost:5000/api/support-ticket', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        problem:   selectedProblem,
+        order_id:  orderId || 'Not provided',
+        describe:  describe || 'No description',
+        ticket_id: ticketId,
+        user:      localStorage.getItem('userName') || 'User',
+        date:      new Date().toISOString()
+      })
+    });
+  } catch(e) { /* server offline — proceed anyway */ }
+
+  document.getElementById('ticketId').textContent = ticketId;
+  document.getElementById('successScreen').classList.add('show');
+}
+
+function openChat() {
+  alert('💬 Live chat coming soon! Please call 1800-000-0000 or WhatsApp us for immediate help.');
+}
+</script>
+</body>
+</html>
