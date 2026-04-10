@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment | FuelX</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #f5b800;
+  --amber: #e07b00;
+  --bg: #07050a;
+  --surface: #0f0d14;
+  --surface2: #15131c;
+  --border: rgba(255,255,255,0.07);
+  --text: #f0f0f0;
+  --muted: #8a94a6;
+  --green: #22c55e;
+  --red: #ef4444;
+  --orange: #f97316;
+  --blue: #3b82f6;
+  --purple: #8b5cf6;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Barlow',sans-serif;
+  background:var(--bg); color:var(--text);
+  min-height:100vh; padding-bottom:100px; overflow-x:hidden;
+}
+
+body::before {
+  content:''; position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(220,30,30,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 80% at 0% 50%, rgba(80,20,120,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 30%, rgba(60,10,100,0.1) 0%, transparent 55%);
+  pointer-events:none; z-index:0;
+}
+
+/* NAVBAR */
+.navbar {
+  display:flex; align-items:center; gap:12px;
+  padding:0 20px; height:64px;
+  background:rgba(7,5,10,0.96); backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:100;
+}
+.back-btn {
+  width:36px; height:36px; background:var(--surface);
+  border:1px solid var(--border); border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  text-decoration:none; color:var(--text); font-size:16px; transition:.2s;
+}
+.back-btn:hover { border-color:var(--gold); background:var(--surface2); }
+.logo {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:26px; font-weight:800; letter-spacing:1.5px; color:var(--text);
+}
+.logo-x { color:var(--gold); }
+.nav-label { font-size:13px; color:var(--muted); font-weight:500; margin-left:auto; }
+
+/* CONTENT */
+.content { padding:20px; display:flex; flex-direction:column; gap:14px; position:relative; z-index:1; }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.content > * { animation:fadeUp .35s ease both; }
+.content > *:nth-child(1){animation-delay:.05s}
+.content > *:nth-child(2){animation-delay:.10s}
+.content > *:nth-child(3){animation-delay:.15s}
+.content > *:nth-child(4){animation-delay:.20s}
+
+/* ORDER SUMMARY CARD */
+.summary-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:18px; overflow:hidden; position:relative;
+}
+.summary-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(245,184,0,0.3),transparent);
+}
+.summary-title {
+  padding:14px 20px; background:rgba(255,255,255,0.02);
+  border-bottom:1px solid var(--border);
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:15px; font-weight:700; color:var(--gold); letter-spacing:.5px;
+}
+.summary-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:13px 20px; border-bottom:1px solid rgba(255,255,255,0.04);
+  font-size:14px;
+}
+.summary-row:last-child { border-bottom:none; }
+.summary-row .label { color:var(--muted); font-weight:500; }
+.summary-row .value { color:var(--text); font-weight:600; }
+.summary-row.total-row .label {
+  font-family:'Barlow Condensed',sans-serif;
+  color:var(--text); font-weight:700; font-size:16px; letter-spacing:.3px;
+}
+.summary-row.total-row .value {
+  font-family:'Barlow Condensed',sans-serif;
+  color:var(--gold); font-weight:800; font-size:22px;
+}
+
+/* SECTION TITLE */
+.section-title {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px; font-weight:700; color:var(--muted);
+  text-transform:uppercase; letter-spacing:1.5px; padding:6px 0 2px;
+}
+
+/* PAYMENT METHOD CARDS */
+.methods-list { display:flex; flex-direction:column; gap:10px; }
+
+.method-card {
+  background:var(--surface); border:1.5px solid var(--border);
+  border-radius:16px; padding:16px 18px;
+  display:flex; align-items:center; gap:14px;
+  cursor:pointer; transition:all .2s; position:relative; overflow:hidden;
+}
+.method-card::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:3px; background:transparent; transition:.2s;
+}
+.method-card:hover { border-color:rgba(255,255,255,0.14); background:var(--surface2); }
+.method-card.selected { border-color:var(--gold); background:rgba(245,184,0,0.04); }
+.method-card.selected::before { background:linear-gradient(180deg,var(--gold),var(--amber)); }
+
+.method-icon {
+  width:48px; height:48px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px; flex-shrink:0;
+}
+.icon-upi    { background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.2); }
+.icon-card   { background:rgba(59,130,246,.12); border:1px solid rgba(59,130,246,.2); }
+.icon-wallet { background:rgba(16,185,129,.12); border:1px solid rgba(16,185,129,.2); }
+.icon-cod    { background:rgba(245,184,0,.10);  border:1px solid rgba(245,184,0,.2); }
+.icon-net    { background:rgba(139,92,246,.12); border:1px solid rgba(139,92,246,.2); }
+
+.method-info { flex:1; }
+.method-name {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:17px; font-weight:700; color:var(--text);
+  margin-bottom:2px; letter-spacing:.3px;
+}
+.method-desc { font-size:12px; color:var(--muted); }
+
+.method-radio {
+  width:22px; height:22px; border-radius:50%;
+  border:2px solid var(--border); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--surface2); transition:.2s;
+}
+.method-card.selected .method-radio {
+  border-color:var(--gold); background:rgba(245,184,0,0.12);
+}
+.method-card.selected .method-radio::after {
+  content:'✓'; font-size:11px; color:var(--gold); font-weight:800;
+}
+
+/* UPI SECTION */
+.upi-section { display:none; flex-direction:column; gap:10px; }
+.upi-section.show { display:flex; }
+
+/* UPI APP GRID */
+.upi-apps-label {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:12px; color:var(--muted); font-weight:700;
+  text-transform:uppercase; letter-spacing:.8px; padding:0 2px;
+}
+
+.upi-apps-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.upi-app-btn {
+  background:var(--surface); border:1.5px solid var(--border);
+  border-radius:14px; padding:14px 16px;
+  display:flex; align-items:center; gap:12px;
+  cursor:pointer; transition:all .22s;
+  text-decoration:none; position:relative; overflow:hidden;
+}
+.upi-app-btn:hover { border-color:rgba(255,255,255,0.2); background:var(--surface2); transform:translateY(-1px); }
+.upi-app-btn:active { transform:scale(0.98); }
+
+.upi-app-btn.gpay { --accent: #4285f4; }
+.upi-app-btn.phonepe { --accent: #5f259f; }
+.upi-app-btn.paytm { --accent: #00baf2; }
+.upi-app-btn.bhim { --accent: #00A86B; }
+
+.upi-app-btn::after {
+  content:''; position:absolute; bottom:0; left:0; right:0;
+  height:2px; background:var(--accent); opacity:0; transition:.2s;
+}
+.upi-app-btn:hover::after { opacity:1; }
+
+.upi-app-logo {
+  width:36px; height:36px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+}
+.upi-app-info .app-name {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:15px; font-weight:700; color:var(--text); letter-spacing:.3px;
+}
+.upi-app-info .app-sub { font-size:11px; color:var(--muted); margin-top:1px; }
+
+/* OR DIVIDER */
+.or-divider {
+  display:flex; align-items:center; gap:10px; padding:2px 0;
+}
+.or-divider::before, .or-divider::after {
+  content:''; flex:1; height:1px; background:var(--border);
+}
+.or-divider span {
+  font-size:11px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.8px;
+}
+
+/* UPI ID INPUT */
+.upi-input-wrap {
+  background:var(--surface); border:1.5px solid rgba(245,184,0,0.2);
+  border-radius:14px; padding:16px 18px;
+}
+.upi-input-wrap label {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:12px; color:var(--muted); font-weight:700;
+  display:block; margin-bottom:8px; text-transform:uppercase; letter-spacing:.8px;
+}
+.upi-id-row { display:flex; gap:8px; }
+.upi-input-wrap input {
+  flex:1; padding:12px 14px;
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:10px; color:var(--text);
+  font-family:'Barlow',sans-serif; font-size:14px; outline:none; transition:.2s;
+}
+.upi-input-wrap input:focus { border-color:var(--gold); }
+.upi-input-wrap input::placeholder { color:var(--muted); }
+.upi-pay-link-btn {
+  padding:12px 14px; border:none; border-radius:10px;
+  background:linear-gradient(135deg,var(--gold),var(--amber));
+  color:#000; font-family:'Barlow',sans-serif;
+  font-size:13px; font-weight:700; cursor:pointer; transition:.2s;
+  white-space:nowrap; flex-shrink:0;
+}
+.upi-pay-link-btn:hover { opacity:.88; }
+
+/* UPI STATUS */
+.upi-status {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; padding:12px 16px;
+  font-size:13px; color:var(--muted); text-align:center;
+  display:none;
+}
+.upi-status.show { display:block; }
+.upi-status.waiting { border-color:rgba(245,184,0,0.3); color:var(--gold); }
+.upi-status.failed  { border-color:rgba(239,68,68,0.3); color:var(--red); }
+
+/* CARD INPUT */
+.card-input-wrap {
+  background:var(--surface); border:1.5px solid rgba(59,130,246,.25);
+  border-radius:14px; padding:16px 18px; display:none;
+}
+.card-input-wrap.show { display:block; }
+.card-field { margin-bottom:12px; }
+.card-field:last-child { margin-bottom:0; }
+.card-field label {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:12px; color:var(--muted); font-weight:700;
+  display:block; margin-bottom:6px; text-transform:uppercase; letter-spacing:.8px;
+}
+.card-field input {
+  width:100%; padding:12px 14px;
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:10px; color:var(--text);
+  font-family:'Barlow',sans-serif; font-size:14px; outline:none; transition:.2s;
+}
+.card-field input:focus { border-color:#3b82f6; }
+.card-field input::placeholder { color:var(--muted); }
+.card-row { display:flex; gap:10px; }
+.card-row .card-field { flex:1; }
+
+/* PAY BUTTON */
+.pay-bar {
+  position:fixed; bottom:0; left:0; right:0; padding:16px 20px;
+  background:linear-gradient(to top, var(--bg) 75%, transparent); z-index:100;
+}
+.pay-btn {
+  width:100%; padding:15px; border:none; border-radius:12px;
+  background:linear-gradient(135deg, var(--gold), var(--amber));
+  color:#000; font-family:'Barlow',sans-serif;
+  font-size:15px; font-weight:700; cursor:pointer; transition:.2s; letter-spacing:.3px;
+}
+.pay-btn:hover:not(:disabled) { opacity:.88; transform:translateY(-2px); box-shadow:0 12px 32px rgba(245,184,0,0.25); }
+.pay-btn:disabled { opacity:.2; cursor:not-allowed; transform:none; box-shadow:none; }
+
+/* PROCESSING OVERLAY */
+.overlay {
+  position:fixed; inset:0; background:rgba(7,5,10,0.92);
+  display:none; flex-direction:column;
+  align-items:center; justify-content:center;
+  z-index:999; gap:16px;
+}
+.overlay.show { display:flex; }
+.spinner {
+  width:56px; height:56px; border-radius:50%;
+  border:4px solid var(--surface2); border-top-color:var(--gold);
+  animation:spin .9s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.overlay-text {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px; font-weight:700; color:var(--text); letter-spacing:.3px;
+}
+.overlay-sub { font-size:13px; color:var(--muted); }
+
+/* SUCCESS SCREEN */
+.success-screen {
+  position:fixed; inset:0; background:var(--bg);
+  display:none; flex-direction:column;
+  align-items:center; justify-content:center;
+  z-index:1000; padding:30px; text-align:center;
+}
+.success-screen.show { display:flex; }
+.success-icon {
+  width:90px; height:90px; border-radius:50%;
+  background:rgba(34,197,94,0.12); border:3px solid var(--green);
+  display:flex; align-items:center; justify-content:center;
+  font-size:42px; margin-bottom:20px;
+  animation:popIn .4s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+
+.success-title {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:30px; font-weight:800; color:var(--green);
+  margin-bottom:8px; letter-spacing:.5px;
+}
+.success-sub { font-size:14px; color:var(--muted); margin-bottom:28px; line-height:1.6; }
+
+.success-details {
+  width:100%; background:var(--surface); border:1px solid var(--border);
+  border-radius:16px; overflow:hidden; margin-bottom:24px; position:relative;
+}
+.success-details::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(34,197,94,0.3),transparent);
+}
+.success-row {
+  display:flex; justify-content:space-between;
+  padding:13px 20px; border-bottom:1px solid rgba(255,255,255,0.04); font-size:14px;
+}
+.success-row:last-child { border-bottom:none; }
+.success-row .k { color:var(--muted); font-weight:500; }
+.success-row .v { color:var(--text); font-weight:600; }
+.success-row .v.green { color:var(--green); font-weight:700; }
+
+.go-home-btn {
+  width:100%; padding:15px; border:none; border-radius:12px;
+  background:linear-gradient(135deg, var(--gold), var(--amber));
+  color:#000; font-family:'Barlow',sans-serif;
+  font-size:15px; font-weight:700; cursor:pointer; transition:.2s; letter-spacing:.3px;
+}
+.go-home-btn:hover { opacity:.88; transform:translateY(-2px); box-shadow:0 12px 32px rgba(245,184,0,0.25); }
+
+/* UPI WAITING MODAL */
+.upi-modal-bg {
+  position:fixed; inset:0; background:rgba(7,5,10,0.88);
+  display:none; align-items:flex-end; justify-content:center;
+  z-index:998; backdrop-filter:blur(4px);
+}
+.upi-modal-bg.show { display:flex; }
+.upi-modal {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:24px 24px 0 0; padding:28px 24px 36px;
+  width:100%; max-width:480px; text-align:center;
+  animation:slideUp .3s cubic-bezier(.175,.885,.32,1.1);
+}
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.upi-modal-icon { font-size:48px; margin-bottom:12px; }
+.upi-modal-title {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:22px; font-weight:800; color:var(--text); margin-bottom:6px;
+}
+.upi-modal-sub { font-size:13px; color:var(--muted); line-height:1.6; margin-bottom:20px; }
+.upi-timer {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:32px; font-weight:800; color:var(--gold); margin-bottom:8px;
+}
+.upi-timer-label { font-size:12px; color:var(--muted); margin-bottom:20px; }
+.upi-modal-btns { display:flex; flex-direction:column; gap:10px; }
+.upi-confirm-btn {
+  padding:14px; border:none; border-radius:12px;
+  background:linear-gradient(135deg,var(--green),#16a34a);
+  color:#fff; font-family:'Barlow',sans-serif;
+  font-size:14px; font-weight:700; cursor:pointer; transition:.2s;
+}
+.upi-confirm-btn:hover { opacity:.9; }
+.upi-cancel-btn {
+  padding:12px; border:1px solid var(--border); border-radius:12px;
+  background:transparent; color:var(--muted);
+  font-family:'Barlow',sans-serif; font-size:13px; cursor:pointer; transition:.2s;
+}
+.upi-cancel-btn:hover { border-color:rgba(255,255,255,0.2); color:var(--text); }
+
+/* INFO BANNER */
+.info-banner {
+  background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.2);
+  border-radius:12px; padding:12px 16px;
+  display:flex; align-items:flex-start; gap:10px; font-size:12px; color:#93c5fd;
+  line-height:1.5;
+}
+.info-banner .info-icon { font-size:14px; flex-shrink:0; padding-top:1px; }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <a href="pump.html" class="back-btn">←</a>
+  <div class="logo">FUEL<span class="logo-x">X</span></div>
+  <div class="nav-label">Payment</div>
+</div>
+
+<div class="content">
+
+  <!-- Order Summary -->
+  <div class="summary-card">
+    <div class="summary-title">🧾 Order Summary</div>
+    <div class="summary-row"><span class="label">🚗 Vehicle</span><span class="value" id="sVehicle">-</span></div>
+    <div class="summary-row"><span class="label">⛽ Fuel Type</span><span class="value" id="sFuel">-</span></div>
+    <div class="summary-row"><span class="label">📊 Quantity</span><span class="value" id="sQty">-</span></div>
+    <div class="summary-row"><span class="label">🏪 Pump</span><span class="value" id="sPump">-</span></div>
+    <div class="summary-row"><span class="label">📍 Distance</span><span class="value" id="sDist">-</span></div>
+    <div class="summary-row"><span class="label">🚚 Delivery Fee</span><span class="value">₹50.00</span></div>
+    <div class="summary-row total-row">
+      <span class="label">💰 Total Payable</span>
+      <span class="value" id="sAmount">-</span>
+    </div>
+  </div>
+
+  <!-- Payment Methods -->
+  <div class="section-title">Choose Payment Method</div>
+
+  <div class="methods-list">
+    <div class="method-card" onclick="selectMethod('upi',this)">
+      <div class="method-icon icon-upi">📱</div>
+      <div class="method-info">
+        <div class="method-name">UPI</div>
+        <div class="method-desc">GPay, PhonePe, Paytm, BHIM & more</div>
+      </div>
+      <div class="method-radio"></div>
+    </div>
+
+    <div class="method-card" onclick="selectMethod('card',this)">
+      <div class="method-icon icon-card">💳</div>
+      <div class="method-info">
+        <div class="method-name">Credit / Debit Card</div>
+        <div class="method-desc">Visa, Mastercard, RuPay</div>
+      </div>
+      <div class="method-radio"></div>
+    </div>
+
+    <div class="method-card" onclick="selectMethod('wallet',this)">
+      <div class="method-icon icon-wallet">👛</div>
+      <div class="method-info">
+        <div class="method-name">Mobile Wallet</div>
+        <div class="method-desc">Paytm Wallet, Amazon Pay</div>
+      </div>
+      <div class="method-radio"></div>
+    </div>
+
+    <div class="method-card" onclick="selectMethod('netbanking',this)">
+      <div class="method-icon icon-net">🏦</div>
+      <div class="method-info">
+        <div class="method-name">Net Banking</div>
+        <div class="method-desc">All major Indian banks</div>
+      </div>
+      <div class="method-radio"></div>
+    </div>
+
+    <div class="method-card" onclick="selectMethod('cod',this)">
+      <div class="method-icon icon-cod">💵</div>
+      <div class="method-info">
+        <div class="method-name">Cash on Delivery</div>
+        <div class="method-desc">Pay when fuel arrives</div>
+      </div>
+      <div class="method-radio"></div>
+    </div>
+  </div>
+
+  <!-- UPI SECTION (shown when UPI selected) -->
+  <div class="upi-section" id="upiSection">
+
+    <!-- Quick App Buttons -->
+    <div class="upi-apps-label">Open directly in app</div>
+    <div class="upi-apps-grid">
+
+      <a class="upi-app-btn gpay" id="btnGpay" href="#" onclick="openUpiApp('gpay',event)">
+        <div class="upi-app-logo">💙</div>
+        <div class="upi-app-info">
+          <div class="app-name">Google Pay</div>
+          <div class="app-sub">Tap to open</div>
+        </div>
+      </a>
+
+      <a class="upi-app-btn phonepe" id="btnPhonepe" href="#" onclick="openUpiApp('phonepe',event)">
+        <div class="upi-app-logo">💜</div>
+        <div class="upi-app-info">
+          <div class="app-name">PhonePe</div>
+          <div class="app-sub">Tap to open</div>
+        </div>
+      </a>
+
+      <a class="upi-app-btn paytm" id="btnPaytm" href="#" onclick="openUpiApp('paytm',event)">
+        <div class="upi-app-logo">🩵</div>
+        <div class="upi-app-info">
+          <div class="app-name">Paytm</div>
+          <div class="app-sub">Tap to open</div>
+        </div>
+      </a>
+
+      <a class="upi-app-btn bhim" id="btnBhim" href="#" onclick="openUpiApp('bhim',event)">
+        <div class="upi-app-logo">💚</div>
+        <div class="upi-app-info">
+          <div class="app-name">BHIM UPI</div>
+          <div class="app-sub">Tap to open</div>
+        </div>
+      </a>
+
+    </div>
+
+    <div class="or-divider"><span>or enter UPI ID</span></div>
+
+    <!-- Manual UPI ID -->
+    <div class="upi-input-wrap">
+      <label>Enter UPI ID</label>
+      <div class="upi-id-row">
+        <input type="text" id="upiId" placeholder="yourname@gpay">
+        <button class="upi-pay-link-btn" onclick="sendUpiLink()">Send Link →</button>
+      </div>
+    </div>
+
+    <div class="info-banner">
+      <span class="info-icon">ℹ️</span>
+      <span>Tapping any app button will open the UPI payment screen directly in that app. After paying, tap <strong>"I've completed payment"</strong> to confirm your order.</span>
+    </div>
+
+  </div>
+
+  <!-- Card Input -->
+  <div class="card-input-wrap" id="cardWrap">
+    <div class="card-field">
+      <label>Card Number</label>
+      <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+    </div>
+    <div class="card-field">
+      <label>Cardholder Name</label>
+      <input type="text" id="cardName" placeholder="Name on card">
+    </div>
+    <div class="card-row">
+      <div class="card-field">
+        <label>Expiry</label>
+        <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5">
+      </div>
+      <div class="card-field">
+        <label>CVV</label>
+        <input type="password" id="cardCvv" placeholder="•••" maxlength="3">
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Pay Button -->
+<div class="pay-bar">
+  <button class="pay-btn" id="payBtn" disabled>Select a Payment Method</button>
+</div>
+
+<!-- UPI Waiting Modal (appears after opening UPI app) -->
+<div class="upi-modal-bg" id="upiModalBg">
+  <div class="upi-modal">
+    <div class="upi-modal-icon">📲</div>
+    <div class="upi-modal-title">Complete Payment in App</div>
+    <div class="upi-modal-sub">Complete the ₹<span id="modalAmount">-</span> payment in your UPI app.<br>This request will expire in:</div>
+    <div class="upi-timer" id="upiTimer">4:59</div>
+    <div class="upi-timer-label">minutes remaining</div>
+    <div class="upi-modal-btns">
+      <button class="upi-confirm-btn" onclick="confirmUpiPayment()">✅ I've completed payment</button>
+      <button class="upi-cancel-btn" onclick="cancelUpiModal()">Cancel / Try another method</button>
+    </div>
+  </div>
+</div>
+
+<!-- Processing Overlay -->
+<div class="overlay" id="overlay">
+  <div class="spinner"></div>
+  <div class="overlay-text">Verifying Payment...</div>
+  <div class="overlay-sub" id="overlayStep">Checking transaction status</div>
+</div>
+
+<!-- Success Screen -->
+<div class="success-screen" id="successScreen">
+  <div class="success-icon">✅</div>
+  <div class="success-title">Payment Successful!</div>
+  <div class="success-sub">Your fuel order is confirmed.<br>The delivery is on its way! 🚚</div>
+  <div class="success-details">
+    <div class="success-row"><span class="k">Transaction ID</span><span class="v" id="txnId">-</span></div>
+    <div class="success-row"><span class="k">Amount Paid</span><span class="v green" id="txnAmount">-</span></div>
+    <div class="success-row"><span class="k">Payment Method</span><span class="v" id="txnMethod">-</span></div>
+    <div class="success-row"><span class="k">Pump</span><span class="v" id="txnPump">-</span></div>
+    <div class="success-row"><span class="k">Est. Delivery</span><span class="v green">20–30 minutes</span></div>
+  </div>
+  <button class="go-home-btn" id="goHomeBtn">🏠 Back to Home</button>
+</div>
+
+<script>
+// ── URL PARAMS ──
+var P       = new URLSearchParams(window.location.search);
+var vehicle = P.get('vehicle') || 'My Vehicle';
+var fuel    = P.get('fuel')    || 'Petrol';
+var qty     = P.get('qty')     || '1';
+var pump    = P.get('pump')    || 'FuelX Pump';
+var dist    = P.get('dist')    || '0';
+var amount  = P.get('amount')  || '150';
+
+document.getElementById('sVehicle').textContent = vehicle;
+document.getElementById('sFuel').textContent    = fuel;
+document.getElementById('sQty').textContent     = qty + ' L';
+document.getElementById('sPump').textContent    = pump;
+document.getElementById('sDist').textContent    = dist + ' km';
+document.getElementById('sAmount').textContent  = '₹' + amount;
+document.getElementById('modalAmount').textContent = amount;
+
+// ── UPI CONFIG ──
+// Replace this with your actual merchant UPI ID and name
+var MERCHANT_UPI  = 'fuelx@ybl';        // e.g. yourmerchant@okicici
+var MERCHANT_NAME = 'FuelX Fuel Delivery';
+var TXN_NOTE      = 'Fuel Delivery - ' + qty + 'L ' + fuel;
+var TXN_REF       = 'FX' + Date.now().toString().slice(-8);
+
+var selectedMethod = null;
+var upiTimerInterval = null;
+var upiTimerSeconds = 299; // 5 min
+
+// ── BUILD UPI DEEP LINK ──
+// Standard UPI Intent URL — works across all UPI apps
+function buildUpiUrl(appScheme) {
+  var base = 'upi://pay';
+  var params = new URLSearchParams({
+    pa:   MERCHANT_UPI,
+    pn:   MERCHANT_NAME,
+    tn:   TXN_NOTE,
+    tr:   TXN_REF,
+    am:   amount,
+    cu:   'INR'
+  });
+  // Some apps have their own scheme for direct open
+  // but upi://pay is the universal standard
+  return base + '?' + params.toString();
+}
+
+// App-specific schemes (Android intent fallback)
+var upiSchemes = {
+  gpay:    'gpay://upi/pay',
+  phonepe: 'phonepe://pay',
+  paytm:   'paytm://upi/pay',
+  bhim:    'upi://pay'     // BHIM uses standard UPI
+};
+
+function openUpiApp(app, e) {
+  e.preventDefault();
+  var params = new URLSearchParams({
+    pa:   MERCHANT_UPI,
+    pn:   MERCHANT_NAME,
+    tn:   TXN_NOTE,
+    tr:   TXN_REF,
+    am:   amount,
+    cu:   'INR'
+  });
+
+  var upiLink = 'upi://pay?' + params.toString();
+
+  // Try to open the UPI app
+  window.location.href = upiLink;
+
+  // After a short delay, show the "waiting" modal
+  // (if the app opened successfully, user will be in that app; this modal shows when they return)
+  setTimeout(function() {
+    showUpiWaitingModal();
+  }, 1200);
+}
+
+function sendUpiLink() {
+  var upiInput = document.getElementById('upiId').value.trim();
+  if (!upiInput || !upiInput.includes('@')) {
+    alert('⚠️ Please enter a valid UPI ID (e.g. name@gpay)');
+    return;
+  }
+  // Build UPI link addressed specifically to the payer's UPI ID
+  var params = new URLSearchParams({
+    pa:   MERCHANT_UPI,
+    pn:   MERCHANT_NAME,
+    tn:   TXN_NOTE,
+    tr:   TXN_REF,
+    am:   amount,
+    cu:   'INR'
+  });
+  var upiLink = 'upi://pay?' + params.toString();
+  window.location.href = upiLink;
+  setTimeout(showUpiWaitingModal, 1200);
+}
+
+function showUpiWaitingModal() {
+  document.getElementById('upiModalBg').classList.add('show');
+  startUpiTimer();
+}
+
+function startUpiTimer() {
+  upiTimerSeconds = 299;
+  clearInterval(upiTimerInterval);
+  upiTimerInterval = setInterval(function() {
+    upiTimerSeconds--;
+    var m = Math.floor(upiTimerSeconds / 60);
+    var s = upiTimerSeconds % 60;
+    document.getElementById('upiTimer').textContent =
+      m + ':' + (s < 10 ? '0' : '') + s;
+    if (upiTimerSeconds <= 0) {
+      clearInterval(upiTimerInterval);
+      document.getElementById('upiTimer').textContent = 'Expired';
+      document.getElementById('upiTimer').style.color = 'var(--red)';
+    }
+  }, 1000);
+}
+
+function cancelUpiModal() {
+  clearInterval(upiTimerInterval);
+  document.getElementById('upiModalBg').classList.remove('show');
+}
+
+async function confirmUpiPayment() {
+  clearInterval(upiTimerInterval);
+  document.getElementById('upiModalBg').classList.remove('show');
+  // Show verifying overlay
+  document.getElementById('overlay').classList.add('show');
+  var steps = [
+    'Checking with UPI network...',
+    'Verifying transaction ID...',
+    'Confirming payment receipt...',
+    'Finalizing your order...'
+  ];
+  for (var i = 0; i < steps.length; i++) {
+    document.getElementById('overlayStep').textContent = steps[i];
+    await sleep(700);
+  }
+  document.getElementById('overlay').classList.remove('show');
+  showSuccess('UPI (' + MERCHANT_UPI.split('@')[1].toUpperCase() + ')');
+}
+
+// ── METHOD SELECT ──
+function selectMethod(method, card) {
+  selectedMethod = method;
+  document.querySelectorAll('.method-card').forEach(function(c){ c.classList.remove('selected'); });
+  card.classList.add('selected');
+
+  document.getElementById('upiSection').classList.remove('show');
+  document.getElementById('cardWrap').classList.remove('show');
+
+  if (method === 'upi')  document.getElementById('upiSection').classList.add('show');
+  if (method === 'card') document.getElementById('cardWrap').classList.add('show');
+
+  var btn = document.getElementById('payBtn');
+  if (method === 'upi') {
+    btn.disabled    = true;
+    btn.textContent = 'Use an app button or enter UPI ID above';
+  } else {
+    btn.disabled    = false;
+    btn.textContent = 'Pay ₹' + amount + ' →';
+  }
+}
+
+// ── CARD FORMATTING ──
+document.getElementById('cardNumber').addEventListener('input', function() {
+  var val = this.value.replace(/\D/g,'').substring(0,16);
+  this.value = val.match(/.{1,4}/g) ? val.match(/.{1,4}/g).join(' ') : val;
+});
+document.getElementById('cardExpiry').addEventListener('input', function() {
+  var val = this.value.replace(/\D/g,'').substring(0,4);
+  if (val.length > 2) val = val.slice(0,2) + '/' + val.slice(2);
+  this.value = val;
+});
+
+// ── VALIDATE NON-UPI ──
+function validateInputs() {
+  if (selectedMethod === 'card') {
+    var num    = document.getElementById('cardNumber').value.replace(/\s/g,'');
+    var name   = document.getElementById('cardName').value.trim();
+    var expiry = document.getElementById('cardExpiry').value.trim();
+    var cvv    = document.getElementById('cardCvv').value.trim();
+    if (num.length !== 16)  { alert('⚠️ Enter a valid 16-digit card number'); return false; }
+    if (!name)               { alert('⚠️ Enter cardholder name');               return false; }
+    if (expiry.length < 5)  { alert('⚠️ Enter valid expiry (MM/YY)');          return false; }
+    if (cvv.length < 3)     { alert('⚠️ Enter valid CVV');                     return false; }
+  }
+  return true;
+}
+
+function sleep(ms) { return new Promise(function(r){ setTimeout(r,ms); }); }
+
+function getMethodName(method) {
+  var names = { upi:'UPI', card:'Credit/Debit Card', wallet:'Mobile Wallet', netbanking:'Net Banking', cod:'Cash on Delivery' };
+  return names[method] || method;
+}
+
+function showSuccess(methodLabel) {
+  var txnId = TXN_REF;
+  document.getElementById('txnId').textContent     = txnId;
+  document.getElementById('txnAmount').textContent = '₹' + amount;
+  document.getElementById('txnMethod').textContent = methodLabel || getMethodName(selectedMethod);
+  document.getElementById('txnPump').textContent   = pump;
+
+  document.getElementById('goHomeBtn').onclick = function() {
+    var params = new URLSearchParams({ txn_id:txnId, fuel:fuel, qty:qty, pump:pump, vehicle:vehicle, amount:amount });
+    window.location.href = 'tracking.html?' + params.toString();
+  };
+
+  document.getElementById('successScreen').classList.add('show');
+}
+
+// ── MAIN PAY BUTTON (non-UPI methods) ──
+document.getElementById('payBtn').addEventListener('click', async function() {
+  if (!selectedMethod || selectedMethod === 'upi') return;
+  if (!validateInputs()) return;
+
+  document.getElementById('overlay').classList.add('show');
+  var steps = ['Connecting to payment gateway...','Verifying payment details...','Processing transaction...','Confirming with bank...','Finalizing order...'];
+  for (var i=0; i<steps.length; i++) {
+    document.getElementById('overlayStep').textContent = steps[i];
+    await sleep(700);
+  }
+
+  // Save to backend (non-blocking)
+  try {
+    await fetch('http://localhost:5000/api/save-payment', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ vehicle, pump, fuel, qty, amount, method:selectedMethod, txn_id:TXN_REF, status:'Paid' })
+    });
+  } catch(err) { console.log('Could not save:', err.message); }
+
+  document.getElementById('overlay').classList.remove('show');
+  showSuccess();
+});
+</script>
+</body>
+</html>
