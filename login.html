@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FuelX | Login</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:'Poppins',sans-serif;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+background:
+linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)),
+url("https://images.unsplash.com/photo-1603386329225-868f9b1ee6f9")
+no-repeat center/cover;
+}
+
+.card{
+background:rgba(0,0,0,0.65);
+padding:40px 30px;
+border-radius:10px;
+width:350px;
+text-align:center;
+color:white;
+}
+
+.card h2{
+margin-bottom:20px;
+color:#facc15;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:8px 0;
+border:none;
+border-radius:5px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:15px;
+border:none;
+border-radius:5px;
+background:linear-gradient(45deg,#facc15,#f97316);
+color:white;
+font-weight:600;
+cursor:pointer;
+}
+
+button:hover{ opacity:0.9; }
+
+.link{
+font-size:14px;
+margin-top:12px;
+}
+
+.link a{ color:#facc15; text-decoration:none; }
+
+.password-box{ position:relative; }
+
+.password-box span{
+position:absolute;
+right:12px;
+top:50%;
+transform:translateY(-50%);
+cursor:pointer;
+color:black;
+}
+
+.register-msg{
+margin-top:15px;
+font-size:14px;
+color:white;
+}
+
+.register-msg a{
+color:#facc15;
+text-decoration:none;
+font-weight:600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Login</h2>
+
+<input type="text" id="loginInput" placeholder="Enter Email or Mobile Number" required>
+
+<div class="password-box">
+  <input type="password" id="password" placeholder="Password" required>
+  <span onclick="togglePassword()">👁</span>
+</div>
+
+<button onclick="loginUser()">Login</button>
+
+<div class="link">
+  <a href="forgot password.html">Forgot Password?</a>
+</div>
+
+<div class="register-msg">
+  Don't have an account?
+  <a href="register.html">Register</a>
+</div>
+
+</div>
+
+<script>
+
+/* ── AUTO LOGIN ──
+   If user already logged in before, skip login page directly */
+window.addEventListener("DOMContentLoaded", () => {
+  if(localStorage.getItem("isLoggedIn") === "true"){
+    window.location.href = "dashboard.html";
+  }
+});
+
+/* SHOW / HIDE PASSWORD */
+function togglePassword(){
+  const pass = document.getElementById("password");
+  pass.type = pass.type === "password" ? "text" : "password";
+}
+
+/* LOGIN FUNCTION */
+function loginUser(){
+  const input = document.getElementById("loginInput").value.trim();
+  const pass  = document.getElementById("password").value;
+
+  if(!input || !pass){
+    alert("Please fill all fields!");
+    return;
+  }
+
+  let loginData = { password: pass };
+
+  if(input.includes("@")){
+    loginData.email = input;
+  } else {
+    loginData.mobile = input;
+  }
+
+  fetch("http://localhost:5000/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(loginData)
+  })
+  .then(res => res.json())
+  .then(data => {
+
+    if(data.success === true){
+
+      /* SAVE USER SESSION IN localStorage
+         This keeps user logged in even after closing browser */
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("userName",   data.user.name);
+      localStorage.setItem("userEmail",  data.user.email);
+      localStorage.setItem("userPhone", data.user.mobile);
+
+      /* GO TO DASHBOARD */
+      window.location.href = "dashboard.html";
+
+    } else {
+      alert(data.message);
+    }
+
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Server error.");
+  });
+}
+
+</script>
+
+</body>
+</html>
