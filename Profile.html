@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FuelX — My Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #f5b800;
+  --amber: #e07b00;
+  --bg: #07050a;
+  --surface: #0f0d14;
+  --surface2: #15131c;
+  --border: rgba(255,255,255,0.06);
+  --text: #f0f0f0;
+  --text2: #c0c0c0;
+  --muted: #8a94a6;
+  --green-light: #22c55e;
+  --red: #ef4444;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Barlow', sans-serif;
+  background: #050508;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: 80px;
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 64px;
+  background: rgba(7,5,10,0.96);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 12px;
+}
+.logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px; font-weight: 800; letter-spacing: 1.5px;
+  color: var(--text); display: flex; align-items: center; gap: 7px; text-decoration: none;
+}
+.logo img { width: 28px; height: 28px; object-fit: contain; filter: drop-shadow(0 0 5px rgba(220,30,30,0.5)); }
+.logo-x { color: var(--gold); }
+.logo-dot {
+  width: 6px; height: 6px; background: var(--gold); border-radius: 50%;
+  box-shadow: 0 0 7px var(--gold); animation: blink 2s ease-in-out infinite; margin-left: -2px;
+}
+@keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.75)} }
+.nav-title { font-size: 13px; font-weight: 500; color: var(--muted); margin-left: auto; }
+
+/* PROFILE HERO */
+.profile-hero {
+  background: #0f0d14;
+  border-bottom: 1px solid var(--border);
+  padding: 24px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative; overflow: hidden;
+}
+.profile-hero::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245,184,0,0.25), transparent);
+}
+.p-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: linear-gradient(135deg, #1e1a28, #2a2238);
+  border: 2px solid rgba(245,184,0,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; flex-shrink: 0; position: relative;
+}
+.p-online {
+  position: absolute; bottom: 2px; right: 2px;
+  width: 12px; height: 12px; background: var(--green-light);
+  border-radius: 50%; border: 2px solid #0f0d14;
+}
+.p-info { flex: 1; min-width: 0; }
+.p-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px; font-weight: 800; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.p-sub {
+  font-size: 13px; color: var(--muted); margin-top: 3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.p-member {
+  display: inline-flex; align-items: center; gap: 3px; margin-top: 6px;
+  padding: 3px 9px; background: rgba(245,184,0,0.09);
+  border: 1px solid rgba(245,184,0,0.2); border-radius: 6px;
+  font-size: 10px; font-weight: 700; color: var(--gold);
+  letter-spacing: .5px; text-transform: uppercase;
+}
+
+/* STATS STRIP */
+.stats-strip {
+  display: flex; background: #0f0d14;
+  border-bottom: 1px solid var(--border);
+}
+.stat-item {
+  flex: 1; padding: 14px 0; text-align: center;
+  border-right: 1px solid var(--border);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px; font-weight: 800; color: var(--gold); line-height: 1;
+}
+.stat-txt { font-size: 10px; color: var(--muted); font-weight: 500; margin-top: 3px; }
+
+/* SECTION GAP */
+.section-gap { height: 8px; background: #050508; }
+
+/* SECTION BLOCK */
+.section-block {
+  background: #0f0d14;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.section-label {
+  padding: 13px 20px 6px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px; font-weight: 700; color: var(--muted);
+  letter-spacing: 1.2px; text-transform: uppercase;
+}
+
+/* MENU ROW */
+.menu-row {
+  display: flex; align-items: center;
+  padding: 0 20px; height: 52px;
+  border-bottom: 1px solid var(--border); gap: 12px;
+}
+.menu-row:last-child { border-bottom: none; }
+.menu-icon { font-size: 17px; width: 26px; text-align: center; flex-shrink: 0; }
+.menu-label { font-size: 13px; color: var(--muted); width: 96px; flex-shrink: 0; font-weight: 500; }
+.menu-value {
+  flex: 1; font-size: 14px; font-weight: 600; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.menu-value.faded { color: var(--muted); font-style: italic; font-weight: 400; }
+.menu-value.gold { color: var(--gold); }
+
+/* QUICK LINKS */
+.link-row {
+  display: flex; align-items: center;
+  padding: 0 20px; height: 52px;
+  border-bottom: 1px solid var(--border); gap: 12px;
+  cursor: pointer; transition: background .15s;
+}
+.link-row:last-child { border-bottom: none; }
+.link-row:hover { background: rgba(255,255,255,0.02); }
+.link-icon { font-size: 17px; width: 26px; text-align: center; flex-shrink: 0; }
+.link-label { flex: 1; font-size: 14px; font-weight: 600; color: var(--text); }
+.link-arrow { font-size: 12px; color: var(--muted); }
+
+/* LOGOUT */
+.logout-row {
+  display: flex; align-items: center;
+  padding: 0 20px; height: 52px; gap: 12px; cursor: pointer;
+  background: #0f0d14;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transition: background .15s;
+}
+.logout-row:hover { background: rgba(239,68,68,0.05); }
+.logout-icon { font-size: 17px; }
+.logout-label { font-size: 14px; font-weight: 700; color: var(--red); }
+
+.version-txt {
+  text-align: center; padding: 18px 0 4px;
+  font-size: 11px; color: #1a1a2e;
+}
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: rgba(7,5,10,0.97); border-top: 1px solid var(--border);
+  display: flex; justify-content: space-around; padding: 10px 0 14px;
+  backdrop-filter: blur(24px); z-index: 100;
+}
+.nav-item {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; cursor: pointer; opacity: .3; transition: opacity .2s; padding: 0 14px;
+}
+.nav-item.active { opacity: 1; }
+.nav-item:hover  { opacity: .65; }
+.nav-icon-wrap   { font-size: 20px; line-height: 1; }
+.nav-lbl { font-size: 10px; font-weight: 600; color: var(--muted); }
+.nav-item.active .nav-lbl { color: var(--gold); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.profile-hero  { animation: fadeUp .25s ease both .04s; }
+.stats-strip   { animation: fadeUp .25s ease both .08s; }
+.section-block { animation: fadeUp .25s ease both .12s; }
+.logout-row    { animation: fadeUp .25s ease both .16s; }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="dashboard.html" class="logo">
+    <img src="logo image.png" alt="FuelX">
+    FUEL<span class="logo-x">X</span>
+    <div class="logo-dot"></div>
+  </a>
+  <span class="nav-title">My Profile</span>
+</nav>
+
+<!-- PROFILE HERO -->
+<div class="profile-hero">
+  <div class="p-avatar">
+    👤
+    <div class="p-online"></div>
+  </div>
+  <div class="p-info">
+    <div class="p-name" id="profileName">User</div>
+    <div class="p-sub"  id="profileSub">—</div>
+    <div class="p-member">⭐ FuelX Member</div>
+  </div>
+</div>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stat-item">
+    <div class="stat-num" id="statOrders">0</div>
+    <div class="stat-txt">Orders</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" id="statRating">—</div>
+    <div class="stat-txt">My Rating</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num" id="statJoined">—</div>
+    <div class="stat-txt">Member Since</div>
+  </div>
+</div>
+
+<!-- PERSONAL DETAILS -->
+<div class="section-gap"></div>
+<div class="section-block">
+  <div class="section-label">Personal Details</div>
+  <div class="menu-row">
+    <span class="menu-icon">👤</span>
+    <span class="menu-label">Name</span>
+    <span class="menu-value" id="rowName">—</span>
+  </div>
+  <div class="menu-row">
+    <span class="menu-icon">📱</span>
+    <span class="menu-label">Phone</span>
+    <span class="menu-value" id="rowPhone">—</span>
+  </div>
+  <div class="menu-row">
+    <span class="menu-icon">📧</span>
+    <span class="menu-label">Email</span>
+    <span class="menu-value" id="rowEmail">—</span>
+  </div>
+  <div class="menu-row">
+    <span class="menu-icon">📍</span>
+    <span class="menu-label">Address</span>
+    <span class="menu-value" id="rowAddress">—</span>
+  </div>
+</div>
+
+<!-- VEHICLE DETAILS -->
+<div class="section-gap"></div>
+<div class="section-block">
+  <div class="section-label">Vehicle</div>
+  <div class="menu-row">
+    <span class="menu-icon">🚗</span>
+    <span class="menu-label">Vehicle</span>
+    <span class="menu-value" id="rowVehicle">—</span>
+  </div>
+  <div class="menu-row">
+    <span class="menu-icon">🔢</span>
+    <span class="menu-label">Plate No.</span>
+    <span class="menu-value gold" id="rowPlate">—</span>
+  </div>
+  <div class="menu-row">
+    <span class="menu-icon">⛽</span>
+    <span class="menu-label">Fuel Type</span>
+    <span class="menu-value" id="rowFuel">—</span>
+  </div>
+</div>
+
+<!-- QUICK LINKS -->
+<div class="section-gap"></div>
+<div class="section-block">
+  <div class="section-label">Quick Links</div>
+  <div class="link-row" onclick="location.href='orders.html'">
+    <span class="link-icon">📋</span>
+    <span class="link-label">My Orders</span>
+    <span class="link-arrow">→</span>
+  </div>
+  <div class="link-row" onclick="location.href='tracking.html'">
+    <span class="link-icon">📡</span>
+    <span class="link-label">Track Current Order</span>
+    <span class="link-arrow">→</span>
+  </div>
+  <div class="link-row" onclick="location.href='support.html'">
+    <span class="link-icon">🆘</span>
+    <span class="link-label">Help & Support</span>
+    <span class="link-arrow">→</span>
+  </div>
+</div>
+
+<!-- LOGOUT -->
+<div class="section-gap"></div>
+<div class="logout-row" onclick="logout()">
+  <span class="logout-icon">🚪</span>
+  <span class="logout-label">Sign Out</span>
+</div>
+
+<div class="version-txt">FuelX v1.0.0</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="nav-item" onclick="location.href='dashboard.html'">
+    <span class="nav-icon-wrap">🏠</span><span class="nav-lbl">Home</span>
+  </div>
+  <div class="nav-item" onclick="location.href='request.html'">
+    <span class="nav-icon-wrap">⛽</span><span class="nav-lbl">Request</span>
+  </div>
+  <div class="nav-item" onclick="location.href='orders.html'">
+    <span class="nav-icon-wrap">📋</span><span class="nav-lbl">Orders</span>
+  </div>
+  <div class="nav-item active">
+    <span class="nav-icon-wrap">👤</span><span class="nav-lbl">Profile</span>
+  </div>
+</nav>
+
+<script>
+  if (window.location.protocol !== "file:" && localStorage.getItem("isLoggedIn") !== "true") {
+    window.location.href = "login.html";
+  }
+
+  var name    = localStorage.getItem("userName")    || "";
+  var phone   = localStorage.getItem("userPhone")   || "";
+  var email   = localStorage.getItem("userEmail")   || "";
+  var address = localStorage.getItem("userAddress") || "";
+  var vehicle = localStorage.getItem("userVehicle") || "";
+  var plate   = localStorage.getItem("userPlate")   || "";
+  var fuel    = localStorage.getItem("userFuel")    || "";
+  var joined  = localStorage.getItem("joinedDate")  || "";
+
+  function fill(id, val) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (val) {
+      el.textContent = val;
+    } else {
+      el.textContent = "Not provided";
+      el.classList.add("faded");
+    }
+  }
+
+  document.getElementById("profileName").textContent = name  || "User";
+  document.getElementById("profileSub").textContent  = phone || email || "No contact info";
+
+  document.getElementById("statJoined").textContent = joined
+    ? (new Date(joined).getFullYear() || joined.split(" ").pop() || "—")
+    : "—";
+
+  var ratings = JSON.parse(localStorage.getItem("fuelx_ratings") || "[]");
+  document.getElementById("statRating").textContent = ratings.length > 0
+    ? (ratings.reduce(function(a,r){ return a+r.rating; },0) / ratings.length).toFixed(1) + "★"
+    : "—";
+
+  fill("rowName",    name);
+  fill("rowPhone",   phone);
+  fill("rowEmail",   email);
+  fill("rowAddress", address);
+  fill("rowVehicle", vehicle);
+  fill("rowPlate",   plate);
+  fill("rowFuel",    fuel);
+
+  // Just load order count for the stats strip
+  async function loadOrderCount() {
+    try {
+      var res  = await fetch("http://localhost:5000/api/fuel-requests");
+      var data = await res.json();
+      if (data.success) {
+        document.getElementById("statOrders").textContent = data.data.length;
+      }
+    } catch(e) {
+      var saved = JSON.parse(localStorage.getItem("fuelx_orders") || "[]");
+      document.getElementById("statOrders").textContent = saved.length || "0";
+    }
+  }
+
+  loadOrderCount();
+
+  function logout() {
+    if (confirm("Sign out of FuelX?")) {
+      localStorage.clear();
+      window.location.href = "login.html";
+    }
+  }
+</script>
+</body>
+</html>
