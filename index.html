@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FuelX</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Barlow', sans-serif;
+    background: #060409;
+    color: white;
+    position: relative;
+  }
+
+  /* ════════════════════════════
+     BACKGROUND LAYERS
+  ════════════════════════════ */
+  .bg-base {
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 100% 70% at 50% 0%,   rgba(255,90,0,0.22) 0%, transparent 60%),
+      radial-gradient(ellipse 80%  60% at 100% 100%, rgba(200,60,0,0.12) 0%, transparent 55%),
+      radial-gradient(ellipse 60%  80% at 0%   80%,  rgba(100,20,180,0.10) 0%, transparent 55%),
+      #060409;
+    pointer-events: none;
+  }
+
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(90px);
+    pointer-events: none;
+    will-change: transform;
+  }
+  .blob1 {
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, rgba(255,100,0,0.22), transparent 68%);
+    top: -120px; left: -80px;
+    animation: blob-move1 8s ease-in-out infinite alternate;
+  }
+  .blob2 {
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(245,180,0,0.14), transparent 68%);
+    bottom: -80px; right: -60px;
+    animation: blob-move2 10s ease-in-out infinite alternate;
+  }
+  .blob3 {
+    width: 240px; height: 240px;
+    background: radial-gradient(circle, rgba(130,30,220,0.13), transparent 68%);
+    top: 55%; left: 5%;
+    animation: blob-move1 12s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes blob-move1 {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(40px, 30px) scale(1.15); }
+  }
+  @keyframes blob-move2 {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(-30px, -20px) scale(1.1); }
+  }
+
+  /* Dot grid */
+  .grid {
+    position: fixed; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,100,0,0.07) 1px, transparent 1px);
+    background-size: 30px 30px;
+    pointer-events: none;
+  }
+
+  /* ════════════════════════════
+     PARTICLES
+  ════════════════════════════ */
+  .particles {
+    position: fixed; inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    animation: float-up linear infinite;
+    opacity: 0;
+  }
+  @keyframes float-up {
+    0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 0.4; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+  }
+
+  /* ════════════════════════════
+     MAIN CONTENT
+  ════════════════════════════ */
+  .center {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── TOP CHIP ── */
+  .top-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    background: rgba(255,107,0,0.10);
+    border: 1px solid rgba(255,107,0,0.22);
+    border-radius: 99px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(255,160,80,0.9);
+    margin-bottom: 32px;
+    animation: fade-in 0.6s 0.1s ease both;
+  }
+  .chip-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #ff6b00;
+    box-shadow: 0 0 6px #ff6b00;
+    animation: blink 1.8s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0.2; }
+  }
+
+  /* ── LOGO AREA ── */
+  .logo-area {
+    position: relative;
+    width: 160px; height: 160px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 32px;
+  }
+
+  /* Spinning arcs */
+  .arc-outer {
+    position: absolute;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    border: 1.5px solid transparent;
+    border-top-color: rgba(255,107,0,0.6);
+    border-right-color: rgba(255,107,0,0.2);
+    animation: spin 3s linear infinite;
+  }
+  .arc-inner {
+    position: absolute;
+    width: 128px; height: 128px;
+    border-radius: 50%;
+    border: 1.5px solid transparent;
+    border-bottom-color: rgba(245,184,0,0.5);
+    border-left-color: rgba(245,184,0,0.15);
+    animation: spin 2s linear infinite reverse;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Pulse rings */
+  .pulse-ring {
+    position: absolute;
+    width: 150px; height: 150px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,107,0,0.2);
+    animation: pulse-out 2.8s ease-out infinite;
+  }
+  .pulse-ring:nth-child(3) { animation-delay: 0s; }
+  .pulse-ring:nth-child(4) { animation-delay: 0.9s; border-color: rgba(245,184,0,0.15); }
+  .pulse-ring:nth-child(5) { animation-delay: 1.8s; border-color: rgba(255,107,0,0.08); }
+  @keyframes pulse-out {
+    0%   { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(1.7); opacity: 0; }
+  }
+
+  /* Logo box */
+  .logo-box {
+    width: 100px; height: 100px;
+    border-radius: 26px;
+    background: linear-gradient(145deg, #1e1530, #100d1e, #0d0a18);
+    border: 1px solid rgba(255,107,0,0.28);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    z-index: 2;
+    box-shadow:
+      0 0 0 1px rgba(255,107,0,0.08),
+      0 0 40px rgba(255,107,0,0.25),
+      0 24px 64px rgba(0,0,0,0.6),
+      inset 0 1px 0 rgba(255,255,255,0.06);
+    animation: logo-bounce 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;
+  }
+  @keyframes logo-bounce {
+    0%   { transform: scale(0.3) rotate(-15deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0deg);   opacity: 1; }
+  }
+
+  .logo-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 26px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .logo-box::after {
+    content: '';
+    position: absolute;
+    bottom: -18px; left: 50%;
+    transform: translateX(-50%);
+    width: 70%; height: 18px;
+    background: rgba(255,107,0,0.3);
+    filter: blur(14px);
+    border-radius: 50%;
+  }
+
+  .logo-box img {
+    width: 58px; height: 58px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 14px rgba(255,107,0,0.7));
+    animation: logo-glow 3s ease-in-out infinite alternate;
+  }
+  @keyframes logo-glow {
+    from { filter: drop-shadow(0 0 10px rgba(255,107,0,0.5)); }
+    to   { filter: drop-shadow(0 0 22px rgba(255,150,0,0.9)); }
+  }
+
+  /* ── BRAND ── */
+  .brand {
+    text-align: center;
+    margin-bottom: 8px;
+    animation: fade-up 0.7s 0.55s ease both;
+  }
+  .brand-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 62px;
+    font-weight: 900;
+    letter-spacing: 5px;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 0 0 60px rgba(255,107,0,0.2);
+  }
+  .brand-name .x {
+    color: #ff6b00;
+    text-shadow: 0 0 30px rgba(255,107,0,0.6);
+  }
+  .brand-sub {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.22);
+    margin-top: 5px;
+  }
+
+  /* ── TAGLINE ── */
+  .tagline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 48px;
+    animation: fade-up 0.7s 0.75s ease both;
+  }
+  .tagline-item {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.3);
+    text-transform: uppercase;
+  }
+  .tagline-sep {
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: rgba(255,107,0,0.5);
+  }
+
+  /* ── LOADER ── */
+  .loader-wrap {
+    width: 220px;
+    animation: fade-up 0.7s 1s ease both;
+  }
+  .loader-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .loader-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+  }
+  .loader-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #ff6b00;
+    animation: blink 1s ease-in-out infinite;
+  }
+  .loader-pct {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: #ff6b00;
+    letter-spacing: 1px;
+  }
+  .loader-track {
+    width: 100%;
+    height: 2px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 99px;
+    overflow: visible;
+    position: relative;
+  }
+  .loader-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #c44000, #ff6b00, #f5b800);
+    box-shadow: 0 0 12px rgba(255,107,0,0.7), 0 0 24px rgba(255,107,0,0.3);
+    position: relative;
+    transition: width 0.1s linear;
+  }
+  .loader-fill::after {
+    content: '';
+    position: absolute;
+    right: -4px; top: 50%;
+    transform: translateY(-50%);
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 8px #ff6b00, 0 0 16px rgba(255,107,0,0.5);
+  }
+
+  /* ── BOTTOM ── */
+  .bottom-area {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    padding: 0 0 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 10;
+    animation: fade-in 0.6s 1.3s ease both;
+  }
+  .powered-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .powered-text {
+    font-size: 10px;
+    color: rgba(255,255,255,0.13);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .powered-badge {
+    font-size: 10px;
+    color: rgba(255,107,0,0.4);
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+  .version-row {
+    font-size: 9px;
+    color: rgba(255,255,255,0.08);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* ── EXIT ── */
+  body.exit {
+    animation: page-out 0.5s ease forwards;
+  }
+  @keyframes page-out {
+    to { opacity: 0; transform: scale(1.04); }
+  }
+</style>
+</head>
+<body>
+
+<!-- BG -->
+<div class="bg-base"></div>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+<div class="grid"></div>
+<div class="particles" id="particles"></div>
+
+<!-- CENTER -->
+<div class="center">
+
+  <div class="top-chip">
+    <div class="chip-dot"></div>
+    Launching
+  </div>
+
+  <div class="logo-area">
+    <div class="arc-outer"></div>
+    <div class="arc-inner"></div>
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="logo-box">
+      <img src="logo image.png" alt="FuelX">
+    </div>
+  </div>
+
+  <div class="brand">
+    <div class="brand-name">FUEL<span class="x">X</span></div>
+    <div class="brand-sub">Fuel at your doorstep</div>
+  </div>
+
+  <div class="tagline">
+    <span class="tagline-item">Fast</span>
+    <div class="tagline-sep"></div>
+    <span class="tagline-item">Reliable</span>
+    <div class="tagline-sep"></div>
+    <span class="tagline-item">24 / 7</span>
+  </div>
+
+  <div class="loader-wrap">
+    <div class="loader-top">
+      <div class="loader-status">
+        <div class="loader-dot"></div>
+        <span id="statusText">Initializing</span>
+      </div>
+      <div class="loader-pct" id="pct">0%</div>
+    </div>
+    <div class="loader-track">
+      <div class="loader-fill" id="loaderFill"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Bottom -->
+<div class="bottom-area">
+  <div class="powered-row">
+    <span class="powered-text">Powered by</span>
+    <span class="powered-badge">FUELX TECH</span>
+  </div>
+  <div class="version-row">v2.4.1 · Mumbai, India</div>
+</div>
+
+<script>
+  /* ── PARTICLES ── */
+  const container = document.getElementById('particles');
+  const colors = ['rgba(255,107,0,', 'rgba(245,184,0,', 'rgba(200,80,0,'];
+  for (let i = 0; i < 22; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 4 + 2;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const opacity = (Math.random() * 0.4 + 0.1).toFixed(2);
+    p.style.cssText = `
+      left: ${Math.random() * 100}%;
+      width: ${size}px;
+      height: ${size}px;
+      background: ${color}${opacity});
+      animation-duration: ${Math.random() * 6 + 5}s;
+      animation-delay: ${Math.random() * 4}s;
+    `;
+    container.appendChild(p);
+  }
+
+  /* ── LOADER ── */
+  const statuses = ['Initializing', 'Loading assets', 'Connecting', 'Almost ready'];
+  let pct = 0;
+  const pctEl    = document.getElementById('pct');
+  const fillEl   = document.getElementById('loaderFill');
+  const statusEl = document.getElementById('statusText');
+
+  const interval = setInterval(() => {
+    pct = Math.min(pct + Math.floor(Math.random() * 6 + 2), 100);
+    pctEl.textContent  = pct + '%';
+    fillEl.style.width = pct + '%';
+
+    if      (pct < 30) statusEl.textContent = statuses[0];
+    else if (pct < 60) statusEl.textContent = statuses[1];
+    else if (pct < 85) statusEl.textContent = statuses[2];
+    else               statusEl.textContent = statuses[3];
+
+    if (pct >= 100) {
+      clearInterval(interval);
+      pctEl.textContent    = '100%';
+      statusEl.textContent = 'Ready!';
+    }
+  }, 70);
+
+  /* ── REDIRECT ── */
+  setTimeout(() => {
+    document.body.classList.add('exit');
+    setTimeout(() => { window.location.href = 'login.html'; }, 480);
+  }, 2600);
+</script>
+</body>
+</html>
