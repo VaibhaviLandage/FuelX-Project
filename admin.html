@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FuelX — Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #f5b800;
+  --amber: #e07b00;
+  --orange: #ff6b00;
+  --orange-dark: #d95a00;
+  --orange-light: rgba(255,107,0,0.08);
+  --bg: #07050a;
+  --white: #0f0d14;
+  --surface: #0f0d14;
+  --surface2: #15131c;
+  --border: rgba(255,255,255,0.07);
+  --text: #f0f0f0;
+  --muted: #8a8fa0;
+  --muted2: #4a5060;
+  --green: #22c55e;
+  --green-bg: rgba(34,197,94,0.08);
+  --green-border: rgba(34,197,94,0.18);
+  --red: #ef4444;
+  --red-bg: rgba(239,68,68,0.08);
+  --blue: #60a5fa;
+  --blue-bg: rgba(96,165,250,0.08);
+  --shadow-sm: 0 1px 6px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 36px rgba(0,0,0,0.5);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Barlow', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── LOGIN SCREEN ── */
+#loginScreen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+#loginScreen::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(255,107,0,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 85% 80%, rgba(245,184,0,0.04) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.login-grid-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,107,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,107,0,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 100%);
+}
+
+.login-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 44px 36px 40px;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,107,0,0.05);
+  animation: fadeUp 0.5s ease both;
+}
+
+.login-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--orange), var(--gold), transparent);
+  border-radius: 2px 2px 0 0;
+}
+
+.login-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 32px; font-weight: 800; letter-spacing: 1.5px;
+  color: var(--text); margin-bottom: 6px;
+  justify-content: center;
+}
+.login-logo-x { color: var(--orange); }
+.login-logo-dot {
+  width: 8px; height: 8px;
+  background: var(--orange); border-radius: 50%;
+  box-shadow: 0 0 8px var(--orange);
+  animation: blink 2s ease-in-out infinite;
+  margin-left: -2px;
+}
+
+.admin-badge {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; margin-bottom: 28px;
+}
+.admin-badge-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 12px; background: rgba(245,184,0,0.1);
+  border: 1px solid rgba(245,184,0,0.2); border-radius: 20px;
+  font-size: 11px; font-weight: 700; color: var(--gold);
+  letter-spacing: 1px; text-transform: uppercase;
+}
+
+.login-heading {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 26px; font-weight: 800;
+  text-align: center; margin-bottom: 6px;
+  color: var(--text);
+}
+.login-sub {
+  font-size: 13px; color: var(--muted);
+  text-align: center; margin-bottom: 28px;
+}
+
+.field { margin-bottom: 16px; }
+.field label {
+  display: block; font-size: 12px; font-weight: 700;
+  color: var(--muted); letter-spacing: 0.5px;
+  text-transform: uppercase; margin-bottom: 7px;
+}
+.field-wrap { position: relative; }
+.field-wrap .field-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  font-size: 15px; pointer-events: none; z-index: 1;
+}
+.field input {
+  width: 100%;
+  padding: 12px 14px 12px 40px;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'Barlow', sans-serif; font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field input::placeholder { color: var(--muted2); }
+.field input:focus {
+  border-color: rgba(255,107,0,0.45);
+  box-shadow: 0 0 0 3px rgba(255,107,0,0.08);
+}
+
+.login-error {
+  background: var(--red-bg); border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 8px; padding: 10px 14px;
+  font-size: 13px; color: var(--red);
+  margin-bottom: 14px; display: none;
+  align-items: center; gap: 8px;
+}
+
+.login-btn {
+  width: 100%; padding: 14px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, var(--orange), var(--amber));
+  color: #fff; font-family: 'Barlow', sans-serif;
+  font-size: 15px; font-weight: 700; border: none;
+  cursor: pointer; letter-spacing: 0.3px;
+  box-shadow: 0 6px 24px rgba(255,107,0,0.3);
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  margin-top: 4px;
+}
+.login-btn:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 12px 32px rgba(255,107,0,0.4); }
+.login-btn:active { transform: translateY(0); }
+
+.login-hint {
+  text-align: center; font-size: 12px; color: var(--muted2);
+  margin-top: 18px; padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── ADMIN DASHBOARD ── */
+#dashScreen { display: none; min-height: 100vh; padding-bottom: 20px; }
+
+.admin-navbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 20px; height: 64px;
+  background: rgba(7,5,10,0.97);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.4);
+  backdrop-filter: blur(24px);
+}
+.admin-logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px; font-weight: 800; letter-spacing: 1.5px;
+  color: var(--text); display: flex; align-items: center; gap: 9px;
+}
+.admin-logo-x { color: var(--orange); }
+.admin-logo-dot {
+  width: 7px; height: 7px; background: var(--orange);
+  border-radius: 50%; box-shadow: 0 0 7px var(--orange);
+  animation: blink 2s ease-in-out infinite; margin-left: -2px;
+}
+.admin-label {
+  padding: 3px 10px; background: rgba(245,184,0,0.12);
+  border: 1px solid rgba(245,184,0,0.25); border-radius: 6px;
+  font-size: 11px; font-weight: 700; color: var(--gold);
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.admin-logout {
+  padding: 8px 18px; border-radius: 8px;
+  background: transparent; border: 1.5px solid rgba(255,107,0,0.3);
+  color: var(--orange); font-family: 'Barlow', sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.admin-logout:hover { background: var(--orange-light); border-color: var(--orange); }
+
+.dash-content { padding: 24px 20px; display: flex; flex-direction: column; gap: 22px; }
+
+.dash-header h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px; font-weight: 800; color: var(--text);
+}
+.dash-header p { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+/* KPI Cards */
+.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.kpi-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 20px 16px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.2s, transform 0.2s;
+  position: relative; overflow: hidden;
+}
+.kpi-card::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.kpi-card.orange::after { background: linear-gradient(90deg, var(--orange), var(--amber)); }
+.kpi-card.green::after  { background: linear-gradient(90deg, var(--green), #16a34a); }
+.kpi-card.gold::after   { background: linear-gradient(90deg, var(--gold), var(--amber)); }
+.kpi-card.blue::after   { background: linear-gradient(90deg, var(--blue), #3b82f6); }
+.kpi-card:hover { border-color: rgba(255,107,0,0.22); transform: translateY(-2px); }
+.kpi-icon { font-size: 22px; margin-bottom: 10px; }
+.kpi-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 36px; font-weight: 800; line-height: 1;
+  margin-bottom: 4px;
+}
+.kpi-card.orange .kpi-val { color: var(--orange); }
+.kpi-card.green  .kpi-val { color: var(--green); }
+.kpi-card.gold   .kpi-val { color: var(--gold); }
+.kpi-card.blue   .kpi-val { color: var(--blue); }
+.kpi-lbl { font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: 0.3px; }
+
+/* Section header */
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
+}
+
+/* Tabs */
+.tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.tab {
+  padding: 7px 16px; border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: transparent; color: var(--muted);
+  font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.tab.active {
+  background: var(--orange-light);
+  border-color: rgba(255,107,0,0.3);
+  color: var(--orange);
+}
+.tab:hover:not(.active) { border-color: rgba(255,107,0,0.18); color: var(--text); }
+
+/* Orders */
+.orders-wrap { display: flex; flex-direction: column; gap: 10px; }
+
+.order-card {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  transition: border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.order-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+}
+.order-card.status-pending::before   { background: var(--gold); }
+.order-card.status-accepted::before  { background: var(--blue); }
+.order-card.status-ongoing::before   { background: var(--orange); }
+.order-card.status-delivered::before { background: var(--green); }
+.order-card.status-cancelled::before { background: var(--red); }
+.order-card:hover { border-color: rgba(255,107,0,0.2); }
+
+.order-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.order-fuel { font-weight: 700; font-size: 15px; color: var(--text); }
+.order-meta { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+.status-pill {
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+  text-transform: uppercase; flex-shrink: 0;
+}
+.pill-pending   { background: rgba(245,184,0,0.12); color: var(--gold); border: 1px solid rgba(245,184,0,0.25); }
+.pill-accepted  { background: rgba(96,165,250,0.1); color: var(--blue); border: 1px solid rgba(96,165,250,0.25); }
+.pill-ongoing   { background: rgba(255,107,0,0.1); color: var(--orange); border: 1px solid rgba(255,107,0,0.25); }
+.pill-delivered { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.pill-cancelled { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+
+/* Progress stepper inside card */
+.order-stepper {
+  display: flex; align-items: center; gap: 0;
+  margin: 12px 0; font-size: 10px;
+}
+.step-item { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; }
+.step-dot {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--muted2);
+  background: var(--surface2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; color: var(--muted2);
+  z-index: 1; transition: all 0.3s;
+}
+.step-dot.done { background: var(--green); border-color: var(--green); color: #fff; }
+.step-dot.active { background: var(--orange); border-color: var(--orange); color: #fff; box-shadow: 0 0 8px rgba(255,107,0,0.4); }
+.step-label { font-size: 9px; color: var(--muted2); margin-top: 4px; text-align: center; font-weight: 600; letter-spacing: 0.3px; }
+.step-label.done { color: var(--green); }
+.step-label.active { color: var(--orange); }
+.step-line {
+  position: absolute; top: 10px; left: 50%; right: -50%;
+  height: 2px; background: var(--muted2); z-index: 0;
+  transition: background 0.3s;
+}
+.step-line.done { background: var(--green); }
+.step-item:last-child .step-line { display: none; }
+
+/* Action buttons */
+.order-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+
+.btn-action {
+  padding: 8px 16px; border-radius: 8px;
+  font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 700;
+  border: none; cursor: pointer; transition: opacity 0.2s, transform 0.2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.btn-action:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-action:active { transform: translateY(0); }
+
+.btn-accept  { background: var(--green); color: #fff; }
+.btn-reject  { background: transparent; border: 1.5px solid rgba(239,68,68,0.4); color: var(--red); }
+.btn-reject:hover { background: var(--red-bg); }
+.btn-start   { background: var(--blue); color: #fff; }
+.btn-done    { background: linear-gradient(135deg, var(--orange), var(--amber)); color: #fff; box-shadow: 0 4px 14px rgba(255,107,0,0.3); }
+
+.empty-state {
+  padding: 48px 20px; text-align: center; color: var(--muted);
+  background: var(--surface2); border: 1.5px solid var(--border); border-radius: 14px;
+}
+.empty-state div { font-size: 36px; margin-bottom: 10px; }
+.empty-state p { font-size: 13px; }
+
+/* Toast */
+#toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+  background: var(--surface2); border: 1.5px solid rgba(255,107,0,0.25);
+  border-radius: 10px; padding: 12px 20px;
+  font-size: 13px; font-weight: 600; color: var(--text);
+  box-shadow: var(--shadow-lg); z-index: 9999;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s;
+  opacity: 0; white-space: nowrap;
+}
+#toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+/* Ratings */
+.ratings-panel {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.rating-big { display: flex; align-items: flex-end; gap: 6px; margin-bottom: 14px; }
+.rating-big-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 52px; font-weight: 800; line-height: 1; color: var(--orange);
+}
+.rating-big-info { padding-bottom: 8px; }
+.rating-big-stars { font-size: 16px; letter-spacing: 1px; }
+.rating-big-count { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.rating-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+.rating-bar-lbl { font-size: 12px; color: var(--muted); width: 40px; text-align: right; font-weight: 600; }
+.rating-bar-track { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.rating-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--orange), var(--gold)); transition: width 0.8s ease; }
+.rating-bar-count { font-size: 12px; color: var(--muted2); width: 24px; }
+
+.feedback-item {
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 10px;
+}
+.feedback-item:last-child { margin-bottom: 0; }
+.feedback-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.feedback-user { font-weight: 700; font-size: 13px; }
+.feedback-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.feedback-date { font-size: 11px; color: var(--muted2); margin-top: 6px; }
+
+.refresh-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 8px;
+  background: var(--orange-light); border: 1.5px solid rgba(255,107,0,0.25);
+  color: var(--orange); font-family: 'Barlow', sans-serif;
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s;
+}
+.refresh-btn:hover { background: rgba(255,107,0,0.14); }
+.refresh-icon { transition: transform 0.4s; }
+.refresh-btn:hover .refresh-icon { transform: rotate(180deg); }
+
+@keyframes blink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.7); }
+}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.dash-content > * { animation: fadeUp 0.35s ease both; }
+.dash-content > *:nth-child(1) { animation-delay: 0.04s; }
+.dash-content > *:nth-child(2) { animation-delay: 0.09s; }
+.dash-content > *:nth-child(3) { animation-delay: 0.14s; }
+.dash-content > *:nth-child(4) { animation-delay: 0.19s; }
+.dash-content > *:nth-child(5) { animation-delay: 0.24s; }
+
+.spinner {
+  display: inline-block; width: 20px; height: 20px;
+  border: 2px solid rgba(255,107,0,0.2);
+  border-top-color: var(--orange);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="login-grid-bg"></div>
+  <div class="login-card">
+    <div class="login-logo">FUEL<span class="login-logo-x">X</span><div class="login-logo-dot"></div></div>
+    <div class="admin-badge"><div class="admin-badge-pill">⚙️ Admin Portal</div></div>
+    <div class="login-heading">Admin Sign In</div>
+    <div class="login-sub">Restricted access — authorized personnel only</div>
+
+    <div class="field">
+      <label>Username</label>
+      <div class="field-wrap">
+        <span class="field-icon">👤</span>
+        <input type="text" id="adminUser" placeholder="Enter admin username" autocomplete="off">
+      </div>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div class="field-wrap">
+        <span class="field-icon">🔒</span>
+        <input type="password" id="adminPass" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+    </div>
+
+    <div class="login-error" id="loginError">⚠️ <span id="loginErrorMsg">Invalid credentials. Try again.</span></div>
+    <button class="login-btn" onclick="doLogin()">Sign In to Dashboard →</button>
+    <div class="login-hint">Contact your FuelX administrator for access credentials.</div>
+  </div>
+</div>
+
+<div id="dashScreen">
+  <nav class="admin-navbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="admin-logo">FUEL<span class="admin-logo-x">X</span><div class="admin-logo-dot"></div></div>
+      <span class="admin-label">Admin</span>
+      <span id="loggedInName" style="font-size:13px;color:var(--muted);font-weight:600;margin-left:4px;"></span>
+    </div>
+    <button class="admin-logout" onclick="doLogout()">Logout</button>
+  </nav>
+
+  <div class="dash-content">
+
+    <div class="dash-header">
+      <h2>Orders Dashboard</h2>
+      <p id="lastRefreshed">Loading data...</p>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card orange">
+        <div class="kpi-icon">📦</div>
+        <div class="kpi-val" id="kpiTotal">—</div>
+        <div class="kpi-lbl">Total Orders</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-icon">✅</div>
+        <div class="kpi-val" id="kpiDelivered">—</div>
+        <div class="kpi-lbl">Delivered</div>
+      </div>
+      <div class="kpi-card gold">
+        <div class="kpi-icon">⏳</div>
+        <div class="kpi-val" id="kpiPending">—</div>
+        <div class="kpi-lbl">Pending</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-icon">⭐</div>
+        <div class="kpi-val" id="kpiRating">—</div>
+        <div class="kpi-lbl">Avg Rating</div>
+      </div>
+    </div>
+
+    <!-- Orders List -->
+    <div>
+      <div class="section-header">
+        <span class="section-title">All Orders</span>
+        <button class="refresh-btn" onclick="loadDashboard()">
+          <span class="refresh-icon">🔄</span> Refresh
+        </button>
+      </div>
+      <div class="tabs">
+        <button class="tab active" onclick="filterOrders('all', this)">All</button>
+        <button class="tab" onclick="filterOrders('pending', this)">Pending</button>
+        <button class="tab" onclick="filterOrders('accepted', this)">Accepted</button>
+        <button class="tab" onclick="filterOrders('ongoing', this)">Ongoing</button>
+        <button class="tab" onclick="filterOrders('delivered', this)">Delivered</button>
+        <button class="tab" onclick="filterOrders('cancelled', this)">Cancelled</button>
+      </div>
+      <div id="ordersList">
+        <div style="text-align:center;padding:40px;"><span class="spinner"></span></div>
+      </div>
+    </div>
+
+    <!-- Ratings -->
+    <div>
+      <div class="section-header"><span class="section-title">Customer Ratings</span></div>
+      <div class="ratings-panel">
+        <div class="rating-big">
+          <div class="rating-big-val" id="avgRatingBig">—</div>
+          <div class="rating-big-info">
+            <div class="rating-big-stars" id="avgStars">— — — — —</div>
+            <div class="rating-big-count" id="ratingCount">0 ratings</div>
+          </div>
+        </div>
+        <div id="ratingBars"></div>
+      </div>
+    </div>
+
+    <div id="feedbackSection" style="display:none;">
+      <div class="section-header"><span class="section-title">Customer Feedback</span></div>
+      <div id="feedbackList"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+const ADMINS = [
+  { username: 'vaibhavi.landage',   password: 'VL@FuelX#2024',  name: 'Vaibhavi Landage'   },
+  { username: 'samiksha.jadhav',    password: 'SJ@FuelX#2024',  name: 'Samiksha Jadhav'    },
+  { username: 'srushti.kanherkar',  password: 'SK@FuelX#2024',  name: 'Srushti Kanherkar'  },
+];
+
+// Status flow config
+const STATUS_FLOW = {
+  pending:   { next: 'accepted',  label: '✅ Accept Order',   cls: 'btn-accept' },
+  accepted:  { next: 'ongoing',   label: '🚚 Start Delivery', cls: 'btn-start'  },
+  ongoing:   { next: 'delivered', label: '📦 Mark Delivered', cls: 'btn-done'   },
+};
+const STEPS = ['pending', 'accepted', 'ongoing', 'delivered'];
+const STEP_LABELS = { pending: 'Placed', accepted: 'Accepted', ongoing: 'En Route', delivered: 'Delivered' };
+
+let allOrders = [];
+let currentFilter = 'all';
+let toastTimer = null;
+
+// ── AUTH ──
+function doLogin() {
+  const u = document.getElementById('adminUser').value.trim();
+  const p = document.getElementById('adminPass').value.trim();
+  const err = document.getElementById('loginError');
+  const errMsg = document.getElementById('loginErrorMsg');
+  if (!u || !p) { errMsg.textContent = 'Please enter both username and password.'; err.style.display = 'flex'; return; }
+  const match = ADMINS.find(a => a.username === u && a.password === p);
+  if (!match) { errMsg.textContent = 'Invalid credentials. Access denied.'; err.style.display = 'flex'; document.getElementById('adminPass').value = ''; return; }
+  err.style.display = 'none';
+  localStorage.setItem('fuelx_admin', 'true');
+  localStorage.setItem('fuelx_admin_name', match.name);
+  showDash();
+}
+
+function doLogout() {
+  if (confirm('Logout from admin panel?')) {
+    localStorage.removeItem('fuelx_admin');
+    localStorage.removeItem('fuelx_admin_name');
+    document.getElementById('dashScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('adminUser').value = '';
+    document.getElementById('adminPass').value = '';
+  }
+}
+
+function showDash() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashScreen').style.display = 'block';
+  const name = localStorage.getItem('fuelx_admin_name') || '';
+  document.getElementById('loggedInName').textContent = name ? `· ${name}` : '';
+  loadDashboard();
+}
+
+// ── LOAD DATA ──
+async function loadDashboard() {
+  document.getElementById('lastRefreshed').textContent = 'Refreshing...';
+  try {
+    const res = await fetch('http://localhost:5000/api/fuel-requests');
+    const data = await res.json();
+    if (data.success) {
+      // Merge backend orders with any local status overrides
+      const localOverrides = JSON.parse(localStorage.getItem('fuelx_status_overrides') || '{}');
+      allOrders = data.data.map(o => ({
+        ...o,
+        status: localOverrides[o._id] || o.status || 'pending'
+      }));
+    } else { allOrders = getDemoOrders(); }
+  } catch(e) { allOrders = getDemoOrders(); }
+
+  renderKPIs();
+  renderOrders(currentFilter);
+  renderRatings();
+  const now = new Date();
+  document.getElementById('lastRefreshed').textContent =
+    `Last updated: ${now.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'})}`;
+}
+
+function getDemoOrders() {
+  const stored = JSON.parse(localStorage.getItem('fuelx_orders') || '[]');
+  const localOverrides = JSON.parse(localStorage.getItem('fuelx_status_overrides') || '{}');
+  const demo = [
+    { _id: 'FX001', id: '#FX-001', fuelType: 'Petrol', quantity: 10, vehicleNumber: 'MH-09 1234', pumpName: 'HP Pump, Andheri', status: 'delivered', time: '09:14 AM', user: 'Arjun Shah' },
+    { _id: 'FX002', id: '#FX-002', fuelType: 'Diesel', quantity: 20, vehicleNumber: 'MH-12 5678', pumpName: 'BPCL, Bandra',      status: 'pending',   time: '10:22 AM', user: 'Priya Mehta' },
+    { _id: 'FX003', id: '#FX-003', fuelType: 'Petrol', quantity: 5,  vehicleNumber: 'MH-01 9988', pumpName: 'Indian Oil, Kurla', status: 'pending',   time: '11:05 AM', user: 'Rohit Nair' },
+    { _id: 'FX004', id: '#FX-004', fuelType: 'Diesel', quantity: 15, vehicleNumber: 'MH-14 7766', pumpName: 'HP Pump, Thane',    status: 'accepted',  time: '08:30 AM', user: 'Sneha Iyer' },
+    { _id: 'FX005', id: '#FX-005', fuelType: 'Petrol', quantity: 8,  vehicleNumber: 'MH-03 4421', pumpName: 'BPCL, Powai',      status: 'cancelled', time: '07:55 AM', user: 'Karan Desai' },
+  ];
+  // Apply any local overrides and merge real user orders
+  const merged = [...demo, ...stored].map(o => ({
+    ...o,
+    status: localOverrides[o._id] || o.status || 'pending'
+  }));
+  return merged;
+}
+
+// ── UPDATE STATUS ──
+function updateStatus(orderId, newStatus) {
+  // Save override to localStorage so it persists across refreshes
+  const overrides = JSON.parse(localStorage.getItem('fuelx_status_overrides') || '{}');
+  overrides[orderId] = newStatus;
+  localStorage.setItem('fuelx_status_overrides', JSON.stringify(overrides));
+
+  // Also try to call backend
+  fetch(`http://localhost:5000/api/fuel-requests/${orderId}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status: newStatus })
+  }).catch(() => {}); // Fail silently if backend not available
+
+  // Update in-memory
+  const order = allOrders.find(o => o._id === orderId);
+  if (order) order.status = newStatus;
+
+  // Toast message
+  const messages = {
+    accepted:  '✅ Order accepted! Notifying customer...',
+    ongoing:   '🚚 Delivery started! En route to customer.',
+    delivered: '📦 Order marked as delivered!',
+    cancelled: '❌ Order cancelled.',
+  };
+  showToast(messages[newStatus] || `Status updated to ${newStatus}`);
+
+  renderKPIs();
+  renderOrders(currentFilter);
+}
+
+function cancelOrder(orderId) {
+  if (confirm('Are you sure you want to cancel this order?')) {
+    updateStatus(orderId, 'cancelled');
+  }
+}
+
+// ── RENDER KPIs ──
+function renderKPIs() {
+  document.getElementById('kpiTotal').textContent     = allOrders.length;
+  document.getElementById('kpiDelivered').textContent = allOrders.filter(o => o.status === 'delivered').length;
+  document.getElementById('kpiPending').textContent   = allOrders.filter(o => ['pending','new',''].includes((o.status||'').toLowerCase())).length;
+  const ratings = JSON.parse(localStorage.getItem('fuelx_ratings') || '[]');
+  document.getElementById('kpiRating').textContent = ratings.length
+    ? (ratings.reduce((a,r) => a + r.rating, 0) / ratings.length).toFixed(1)
+    : 'N/A';
+}
+
+// ── FILTER + RENDER ORDERS ──
+function filterOrders(type, btn) {
+  currentFilter = type;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrders(type);
+}
+
+function getStepState(orderStatus, stepStatus) {
+  const oi = STEPS.indexOf(orderStatus);
+  const si = STEPS.indexOf(stepStatus);
+  if (orderStatus === 'cancelled') return si === 0 ? 'done' : 'none';
+  if (si < oi) return 'done';
+  if (si === oi) return 'active';
+  return 'none';
+}
+
+function renderOrders(filter) {
+  const el = document.getElementById('ordersList');
+  let orders = filter === 'all' ? allOrders : allOrders.filter(o => (o.status || 'pending') === filter);
+
+  if (!orders.length) {
+    el.innerHTML = `<div class="empty-state"><div>📭</div><p>No ${filter === 'all' ? '' : filter + ' '}orders found.</p></div>`;
+    return;
+  }
+
+  el.innerHTML = orders.map(o => {
+    const status = (o.status || 'pending').toLowerCase();
+    const pillClass = `pill-${status}`;
+    const isCancelled = status === 'cancelled';
+    const isDelivered = status === 'delivered';
+
+    // Stepper
+    const stepperHTML = !isCancelled ? `
+      <div class="order-stepper">
+        ${STEPS.map((step, i) => {
+          const state = getStepState(status, step);
+          const dotClass = state === 'done' ? 'done' : state === 'active' ? 'active' : '';
+          const lineClass = STEPS.indexOf(status) > i ? 'done' : '';
+          return `
+            <div class="step-item">
+              <div class="step-dot ${dotClass}">${state === 'done' ? '✓' : i+1}</div>
+              <div class="step-line ${lineClass}"></div>
+              <div class="step-label ${dotClass}">${STEP_LABELS[step]}</div>
+            </div>`;
+        }).join('')}
+      </div>` : `<div style="font-size:12px;color:var(--red);margin:10px 0;font-weight:600;">❌ This order was cancelled.</div>`;
+
+    // Action buttons
+    let actionsHTML = '';
+    if (!isCancelled && !isDelivered) {
+      const flow = STATUS_FLOW[status];
+      if (flow) {
+        actionsHTML = `
+          <div class="order-actions">
+            <button class="btn-action ${flow.cls}" onclick="updateStatus('${o._id}','${flow.next}')">
+              ${flow.label}
+            </button>
+            ${status === 'pending' ? `<button class="btn-action btn-reject" onclick="cancelOrder('${o._id}')">✕ Reject</button>` : ''}
+          </div>`;
+      }
+    }
+
+    return `
+      <div class="order-card status-${status}">
+        <div class="order-top">
+          <div>
+            <div class="order-fuel">⛽ ${o.fuelType} · ${o.quantity}L</div>
+            <div class="order-meta">🚗 ${o.vehicleNumber} &nbsp;·&nbsp; 🏪 ${o.pumpName || 'FuelX Station'} &nbsp;·&nbsp; 👤 ${o.user || 'Customer'}</div>
+            ${o.time ? `<div class="order-meta" style="margin-top:2px;">🕐 ${o.time}</div>` : ''}
+          </div>
+          <div>
+            <span class="status-pill ${pillClass}">${status}</span>
+          </div>
+        </div>
+        ${stepperHTML}
+        ${actionsHTML}
+      </div>`;
+  }).join('');
+}
+
+// ── RATINGS ──
+function renderRatings() {
+  const ratings = JSON.parse(localStorage.getItem('fuelx_ratings') || '[]');
+  const count = ratings.length;
+  if (!count) {
+    document.getElementById('avgRatingBig').textContent = '—';
+    document.getElementById('avgStars').textContent = '☆☆☆☆☆';
+    document.getElementById('ratingCount').textContent = 'No ratings yet';
+    document.getElementById('ratingBars').innerHTML = '';
+    return;
+  }
+  const avg = ratings.reduce((a,r) => a+r.rating, 0) / count;
+  document.getElementById('avgRatingBig').textContent = avg.toFixed(1);
+  document.getElementById('ratingCount').textContent = `${count} rating${count !== 1 ? 's' : ''}`;
+  document.getElementById('avgStars').textContent = '⭐'.repeat(Math.round(avg)) + '☆'.repeat(5 - Math.round(avg));
+  document.getElementById('ratingBars').innerHTML = [5,4,3,2,1].map(star => {
+    const cnt = ratings.filter(r => r.rating === star).length;
+    const pct = count ? Math.round((cnt/count)*100) : 0;
+    return `<div class="rating-bar-row">
+      <span class="rating-bar-lbl">${star} ⭐</span>
+      <div class="rating-bar-track"><div class="rating-bar-fill" style="width:${pct}%"></div></div>
+      <span class="rating-bar-count">${cnt}</span>
+    </div>`;
+  }).join('');
+
+  const withText = ratings.filter(r => r.feedback);
+  const feedSection = document.getElementById('feedbackSection');
+  const feedList = document.getElementById('feedbackList');
+  if (withText.length) {
+    feedSection.style.display = 'block';
+    feedList.innerHTML = withText.slice(-6).reverse().map(r => `
+      <div class="feedback-item">
+        <div class="feedback-header">
+          <span class="feedback-user">${r.user || 'Customer'}</span>
+          <span>${'⭐'.repeat(r.rating)}</span>
+        </div>
+        <div class="feedback-text">"${r.feedback}"</div>
+        <div class="feedback-date">${new Date(r.date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>
+      </div>`).join('');
+  } else { feedSection.style.display = 'none'; }
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── INIT ──
+if (localStorage.getItem('fuelx_admin') === 'true') showDash();
+setInterval(loadDashboard, 15000);
+</script>
+</body>
+</html>
