@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FuelX | Register</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:'Poppins',sans-serif;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+
+background:
+linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)),
+url("https://images.unsplash.com/photo-1603386329225-868f9b1ee6f9")
+no-repeat center center/cover;
+}
+
+.card{
+background:rgba(0,0,0,0.65);
+padding:40px 30px;
+border-radius:10px;
+width:350px;
+text-align:center;
+color:white;
+}
+
+.card h2{
+margin-bottom:20px;
+color:#facc15;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:8px 0;
+border:none;
+border-radius:5px;
+font-family:'Poppins',sans-serif;
+font-size:14px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:15px;
+border:none;
+border-radius:5px;
+background:linear-gradient(45deg,#facc15,#f97316);
+color:white;
+font-weight:600;
+cursor:pointer;
+font-family:'Poppins',sans-serif;
+font-size:14px;
+}
+
+button:hover{
+opacity:0.9;
+}
+
+button:disabled{
+opacity:0.5;
+cursor:not-allowed;
+}
+
+.link{
+font-size:14px;
+margin-top:12px;
+}
+
+.link a{
+color:#facc15;
+text-decoration:none;
+}
+
+.password-box{
+position:relative;
+}
+
+.password-box span{
+position:absolute;
+right:12px;
+top:50%;
+transform:translateY(-50%);
+cursor:pointer;
+color:black;
+}
+
+/* ── TOAST ── */
+#toast {
+    position: fixed;
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 280px;
+    max-width: 340px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    z-index: 9999;
+    transition: top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+}
+#toast.show    { top: 20px; }
+#toast.success { background:#14532d; border:1px solid #22c55e; color:#86efac; }
+#toast.error   { background:#450a0a; border:1px solid #ef4444; color:#fca5a5; }
+#toast.info    { background:#1e3a5f; border:1px solid #3b82f6; color:#93c5fd; }
+
+/* ── STATUS MSG ── */
+.status-msg {
+    display: none;
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
+}
+.status-msg.success {
+    display: block;
+    background: rgba(34,197,94,0.12);
+    border: 1px solid rgba(34,197,94,0.35);
+    color: #86efac;
+}
+.status-msg.error {
+    display: block;
+    background: rgba(239,68,68,0.12);
+    border: 1px solid rgba(239,68,68,0.35);
+    color: #f87171;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<div class="card">
+
+    <h2>Create Account</h2>
+
+    <input type="text"  id="fullname"        placeholder="Full Name"        required>
+    <input type="tel"   id="mobile"          placeholder="Mobile Number" maxlength="10" required>
+    <input type="email" id="email"           placeholder="Email Address"    required>
+
+    <div class="password-box">
+        <input type="password" id="password" placeholder="Password" required>
+        <span onclick="togglePassword()">👁</span>
+    </div>
+
+    <div class="password-box">
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+        <span onclick="toggleConfirmPassword()">👁</span>
+    </div>
+
+    <button onclick="registerUser()" id="registerBtn">Register</button>
+
+    <div class="status-msg" id="statusMsg"></div>
+
+    <div class="link">
+        Already have an account?
+        <a href="login.html">Login</a>
+    </div>
+
+</div>
+
+<script>
+
+let toastTimeout = null;
+
+/* ── TOAST ── */
+function showToast(type, message, duration = 3000) {
+    const toast     = document.getElementById("toast");
+    toast.className = "show " + type;
+    toast.textContent = message;
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+        toast.className = type;
+    }, duration);
+}
+
+/* ── STATUS ── */
+function showStatus(type, message) {
+    const el     = document.getElementById("statusMsg");
+    el.className = "status-msg " + type;
+    el.textContent = message;
+}
+function hideStatus() {
+    const el     = document.getElementById("statusMsg");
+    el.className = "status-msg";
+    el.textContent = "";
+}
+
+/* ── TOGGLE PASSWORD ── */
+function togglePassword() {
+    let pass = document.getElementById("password");
+    pass.type = pass.type === "password" ? "text" : "password";
+}
+
+function toggleConfirmPassword() {
+    let pass = document.getElementById("confirmPassword");
+    pass.type = pass.type === "password" ? "text" : "password";
+}
+
+/* ── REGISTER ── */
+function registerUser() {
+
+    const fullname = document.getElementById("fullname").value.trim();
+    const mobile   = document.getElementById("mobile").value.trim();
+    const email    = document.getElementById("email").value.trim();
+    const pass     = document.getElementById("password").value;
+    const confirm  = document.getElementById("confirmPassword").value;
+
+    hideStatus();
+
+    // ── Validations ──
+    if (!fullname || !mobile || !email || !pass || !confirm) {
+        showToast("error", "⚠️ Please fill all fields!");
+        showStatus("error", "⚠️ Please fill all fields.");
+        return;
+    }
+
+    if (mobile.length !== 10 || isNaN(mobile)) {
+        showToast("error", "⚠️ Enter a valid 10-digit mobile number!");
+        showStatus("error", "⚠️ Mobile number must be exactly 10 digits.");
+        return;
+    }
+
+    if (pass.length < 6) {
+        showToast("error", "⚠️ Password must be at least 6 characters!");
+        showStatus("error", "⚠️ Password must be at least 6 characters.");
+        return;
+    }
+
+    if (pass !== confirm) {
+        showToast("error", "⚠️ Passwords do not match!");
+        showStatus("error", "⚠️ Passwords do not match. Please re-enter.");
+        return;
+    }
+
+    // ── Disable button while registering ──
+    const btn       = document.getElementById("registerBtn");
+    btn.disabled    = true;
+    btn.textContent = "Registering...";
+
+    fetch("http://localhost:5000/api/register", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            name:     fullname,
+            mobile:   mobile,
+            email:    email,
+            password: pass
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if (data.success === true) {
+            showToast("success", "✅ Registration successful! Redirecting...", 2500);
+            showStatus("success", "✅ Account created! Redirecting to login...");
+            setTimeout(() => {
+                window.location.href = "login.html";
+            }, 2000);
+
+        } else {
+            btn.disabled    = false;
+            btn.textContent = "Register";
+
+            if (data.reason === "already_registered") {
+                showToast("error", "❌ Email already registered. Please login.", 4000);
+                showStatus("error", "❌ This email is already registered. Please login instead.");
+            } else {
+                showToast("error", "❌ Registration failed. Please try again.");
+                showStatus("error", "❌ Registration failed: " + (data.error || "Please try again."));
+            }
+        }
+
+    })
+    .catch(err => {
+        console.error(err);
+        btn.disabled    = false;
+        btn.textContent = "Register";
+        showToast("error", "❌ Server error. Make sure the server is running.");
+        showStatus("error", "❌ Cannot connect to server. Please make sure it is running.");
+    });
+
+}
+
+</script>
+
+</body>
+</html>
