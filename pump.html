@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Select Pump | FuelX</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+/* ── LIGHT MODE (default) ── */
+:root {
+  --gold: #f5b800;
+  --amber: #e07b00;
+  --orange: #f97316;
+
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --surface2: #f0f2f7;
+  --border: rgba(0,0,0,0.09);
+  --text: #1a1a2e;
+  --muted: #6b7280;
+
+  --navbar-bg: rgba(255,255,255,0.97);
+  --navbar-border: rgba(0,0,0,0.08);
+
+  --gps-pending-bg: rgba(245,184,0,0.07);
+  --gps-pending-border: rgba(245,184,0,0.20);
+  --gps-pending-color: #92660a;
+
+  --chip-bg: #ffffff;
+  --chip-border: rgba(0,0,0,0.10);
+  --chip-color: #6b7280;
+
+  --tab-bg: #ffffff;
+  --tab-border: rgba(0,0,0,0.09);
+  --tab-color: #6b7280;
+  --tab-active-bg: rgba(245,184,0,0.08);
+  --tab-active-border: rgba(245,184,0,0.40);
+  --tab-active-color: #b08800;
+
+  --card-bg: #ffffff;
+  --card-border: rgba(0,0,0,0.09);
+
+  --dist-bg: #f0f2f7;
+  --dist-border: rgba(0,0,0,0.09);
+  --dist-color: #6b7280;
+
+  --radio-bg: #f0f2f7;
+  --radio-border: rgba(0,0,0,0.15);
+
+  --skel-bg: #ffffff;
+  --skel-line: #e8eaf0;
+
+  --confirm-bar-bg: linear-gradient(to top, #f4f6fb 72%, transparent);
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.07);
+  --shadow-md: 0 4px 18px rgba(0,0,0,0.10);
+
+  --green: #16a34a;
+  --green-bg: rgba(22,163,74,0.08);
+  --green-border: rgba(22,163,74,0.22);
+  --green-text: #15803d;
+
+  --red: #dc2626;
+  --red-bg: rgba(220,38,38,0.07);
+  --red-border: rgba(220,38,38,0.18);
+  --red-text: #b91c1c;
+
+  --busy-bg: rgba(249,115,22,0.08);
+  --busy-border: rgba(249,115,22,0.22);
+  --busy-color: #c2410c;
+
+  --section-color: #94a3b8;
+}
+
+/* ── DARK MODE ── */
+body.dark {
+  --bg: #07050a;
+  --surface: #0f0d14;
+  --surface2: #15131c;
+  --border: rgba(255,255,255,0.07);
+  --text: #f0f0f0;
+  --muted: #8a94a6;
+
+  --navbar-bg: rgba(7,5,10,0.96);
+  --navbar-border: rgba(255,255,255,0.07);
+
+  --gps-pending-bg: rgba(245,184,0,0.07);
+  --gps-pending-border: rgba(245,184,0,0.15);
+  --gps-pending-color: #fde68a;
+
+  --chip-bg: #15131c;
+  --chip-border: rgba(255,255,255,0.07);
+  --chip-color: #8a94a6;
+
+  --tab-bg: #0f0d14;
+  --tab-border: rgba(255,255,255,0.07);
+  --tab-color: #8a94a6;
+  --tab-active-bg: rgba(245,184,0,0.08);
+  --tab-active-border: rgba(245,184,0,0.40);
+  --tab-active-color: var(--gold);
+
+  --card-bg: #0f0d14;
+  --card-border: rgba(255,255,255,0.07);
+
+  --dist-bg: #15131c;
+  --dist-border: rgba(255,255,255,0.07);
+  --dist-color: #8a94a6;
+
+  --radio-bg: #15131c;
+  --radio-border: rgba(255,255,255,0.12);
+
+  --skel-bg: #0f0d14;
+  --skel-line: #15131c;
+
+  --confirm-bar-bg: linear-gradient(to top, #07050a 72%, transparent);
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.30);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.40);
+
+  --green: #22c55e;
+  --green-bg: rgba(34,197,94,0.07);
+  --green-border: rgba(34,197,94,0.22);
+  --green-text: #86efac;
+
+  --red: #ef4444;
+  --red-bg: rgba(239,68,68,0.07);
+  --red-border: rgba(239,68,68,0.18);
+  --red-text: #fca5a5;
+
+  --busy-bg: rgba(249,115,22,0.10);
+  --busy-border: rgba(249,115,22,0.22);
+  --busy-color: var(--orange);
+
+  --section-color: #4a5060;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family:'Barlow',sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* subtle background glows — only in dark mode */
+body.dark::before {
+  content:''; position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(220,30,30,0.05) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 80% at 0% 50%, rgba(80,20,120,0.10) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 100% 30%, rgba(60,10,100,0.08) 0%, transparent 55%);
+  pointer-events:none; z-index:0;
+}
+
+/* ── NAVBAR ── */
+.navbar {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:0 20px; height:64px;
+  background: var(--navbar-bg);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--navbar-border);
+  position:sticky; top:0; z-index:100;
+  box-shadow: var(--shadow-sm);
+  transition: background 0.3s, border-color 0.3s;
+}
+.nav-left { display:flex; align-items:center; gap:12px; }
+
+.back-btn {
+  width:36px; height:36px;
+  background: var(--surface2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:16px;
+  text-decoration:none; color: var(--text);
+  transition:border-color 0.2s, background 0.2s;
+}
+.back-btn:hover { border-color:var(--gold); background: var(--surface); }
+
+.logo {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:26px; font-weight:800; letter-spacing:1.5px; color: var(--text);
+  transition: color 0.3s;
+}
+.logo-x { color:var(--gold); }
+.nav-city { font-size:13px; color: var(--muted); font-weight:500; transition: color 0.3s; }
+
+/* ── GPS BANNER ── */
+.gps-banner {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 20px; font-size:13px; font-weight:500;
+  background: var(--gps-pending-bg);
+  border-bottom:1px solid var(--gps-pending-border);
+  color: var(--gps-pending-color);
+  transition: background 0.4s, border-color 0.4s, color 0.4s;
+  position:relative; z-index:1;
+}
+.gps-banner.success {
+  background: var(--green-bg);
+  border-color: var(--green-border);
+  color: var(--green-text);
+}
+.gps-banner.fail {
+  background: var(--red-bg);
+  border-color: var(--red-border);
+  color: var(--red-text);
+}
+
+.gps-dot {
+  width:8px; height:8px; border-radius:50%; flex-shrink:0;
+  background: var(--gold); box-shadow:0 0 6px var(--gold);
+  animation:blink 1.4s infinite;
+}
+.gps-banner.success .gps-dot { background:var(--green); box-shadow:0 0 8px var(--green); }
+.gps-banner.fail .gps-dot    { background:var(--red); box-shadow:0 0 6px var(--red); animation:none; }
+@keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(1.45)} }
+
+/* ── SUMMARY BAR ── */
+.summary-bar {
+  background: var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:10px 16px; display:flex; gap:8px;
+  overflow-x:auto; scrollbar-width:none; position:relative; z-index:1;
+  transition: background 0.3s, border-color 0.3s;
+}
+.summary-bar::-webkit-scrollbar { display:none; }
+
+.chip {
+  background: var(--chip-bg);
+  border:1px solid var(--chip-border);
+  border-radius:20px; padding:5px 13px;
+  font-size:12px; color: var(--chip-color);
+  white-space:nowrap; flex-shrink:0;
+  transition: background 0.3s, color 0.3s;
+}
+.chip b { color:var(--gold); font-weight:700; }
+
+/* ── FILTER TABS ── */
+.filter-tabs {
+  display:flex; gap:8px; padding:14px 16px 0;
+  overflow-x:auto; scrollbar-width:none; position:relative; z-index:1;
+  background: var(--bg); transition: background 0.3s;
+}
+.filter-tabs::-webkit-scrollbar { display:none; }
+
+.tab {
+  display:flex; align-items:center; gap:6px;
+  padding:8px 16px; border-radius:20px;
+  border:1px solid var(--tab-border);
+  background: var(--tab-bg);
+  color: var(--tab-color);
+  font-size:12px; font-weight:600; font-family:'Barlow',sans-serif;
+  cursor:pointer; white-space:nowrap; transition:all 0.2s;
+}
+.tab:hover { border-color:rgba(245,184,0,0.3); color: var(--text); }
+.tab.active {
+  background: var(--tab-active-bg);
+  border-color: var(--tab-active-border);
+  color: var(--tab-active-color);
+}
+.tab svg { width:16px; height:16px; }
+
+/* ── SECTION HDR ── */
+.section-hdr {
+  padding:14px 16px 8px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px; font-weight:700; color: var(--section-color);
+  text-transform:uppercase; letter-spacing:1.2px;
+  position:relative; z-index:1;
+  background: var(--bg); transition: background 0.3s, color 0.3s;
+}
+
+/* ── PUMP CARDS ── */
+.pumps-list {
+  padding:0 16px 110px;
+  display:flex; flex-direction:column; gap:10px;
+  position:relative; z-index:1;
+  background: var(--bg); transition: background 0.3s;
+}
+
+.pump-card {
+  background: var(--card-bg);
+  border:1.5px solid var(--card-border);
+  border-radius:16px; padding:14px 14px 14px 16px;
+  display:flex; align-items:center; gap:13px;
+  cursor:pointer; transition:all 0.2s;
+  position:relative; overflow:hidden;
+  box-shadow: var(--shadow-sm);
+}
+.pump-card::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:3.5px; background:transparent; transition:.2s;
+}
+.pump-card:hover {
+  border-color: var(--border);
+  background: var(--surface2);
+  box-shadow: var(--shadow-md);
+}
+body:not(.dark) .pump-card:hover {
+  border-color: rgba(0,0,0,0.14);
+}
+.pump-card.nearest-card {
+  border-color: var(--green-border);
+  background: var(--green-bg);
+}
+.pump-card.nearest-card::before { background:linear-gradient(180deg,var(--green),#15803d); }
+.pump-card.selected { border-color:var(--gold); background:rgba(245,184,0,0.04); }
+.pump-card.selected::before { background:linear-gradient(180deg,var(--gold),var(--amber)); }
+
+/* logo box always white — brand logo must stay readable */
+.logo-box {
+  width:56px; height:56px; border-radius:13px;
+  background:#fff; border:1px solid #e8e8e8;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; padding:4px;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+.logo-box svg { width:48px; height:48px; }
+
+.pump-info { flex:1; min-width:0; }
+.brand-row { display:flex; align-items:center; gap:7px; margin-bottom:4px; }
+.brand-name {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px; font-weight:700; text-transform:uppercase;
+  letter-spacing:.8px; color: var(--muted);
+  transition: color 0.3s;
+}
+
+.nearest-pill {
+  background: var(--green-bg);
+  color: var(--green);
+  border:1px solid var(--green-border);
+  font-family:'Barlow',sans-serif;
+  font-size:10px; font-weight:700;
+  padding:2px 8px; border-radius:10px; letter-spacing:.3px;
+  animation:glowpill 2s ease-in-out infinite;
+}
+@keyframes glowpill { 0%,100%{box-shadow:none} 50%{box-shadow:0 0 8px rgba(34,197,94,.25)} }
+
+.pump-name {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:16px; font-weight:700; color: var(--text);
+  margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  letter-spacing:.3px; transition: color 0.3s;
+}
+.pump-addr {
+  font-size:12px; color: var(--muted);
+  margin-bottom:7px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  transition: color 0.3s;
+}
+.pump-meta { display:flex; gap:7px; align-items:center; flex-wrap:wrap; }
+
+.dist-pill {
+  font-size:12px; font-weight:600; padding:3px 9px; border-radius:10px;
+  background: var(--dist-bg);
+  border:1px solid var(--dist-border);
+  color: var(--dist-color);
+  transition: background 0.3s, color 0.3s;
+}
+.dist-pill.best {
+  color: var(--green);
+  border-color: var(--green-border);
+  background: var(--green-bg);
+}
+
+.rating { font-size:12px; color:var(--gold); font-weight:600; }
+
+.status-open {
+  font-size:11px; font-weight:600; padding:3px 9px; border-radius:10px;
+  background: var(--green-bg);
+  color: var(--green);
+  border:1px solid var(--green-border);
+  transition: background 0.3s;
+}
+.status-busy {
+  font-size:11px; font-weight:600; padding:3px 9px; border-radius:10px;
+  background: var(--busy-bg);
+  color: var(--busy-color);
+  border:1px solid var(--busy-border);
+  transition: background 0.3s;
+}
+
+.radio {
+  width:22px; height:22px; border-radius:50%;
+  border:2px solid var(--radio-border);
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  background: var(--radio-bg); transition:all 0.2s;
+}
+.pump-card.selected .radio { border-color:var(--gold); background:rgba(245,184,0,0.12); }
+.pump-card.selected .radio::after { content:'✓'; font-size:11px; color:var(--gold); font-weight:800; }
+
+/* ── SKELETON ── */
+.skel-wrap {
+  padding:0 16px; display:flex; flex-direction:column; gap:10px;
+  position:relative; z-index:1;
+  background: var(--bg); transition: background 0.3s;
+}
+.skel-card {
+  background: var(--skel-bg);
+  border:1.5px solid var(--card-border);
+  border-radius:16px; padding:14px;
+  display:flex; align-items:center; gap:13px;
+  animation:shimmer 1.4s ease-in-out infinite;
+  transition: background 0.3s, border-color 0.3s;
+}
+@keyframes shimmer { 0%,100%{opacity:.5} 50%{opacity:1} }
+.skel-logo { width:56px; height:56px; border-radius:13px; background:var(--skel-line); flex-shrink:0; }
+.skel-lines { flex:1; display:flex; flex-direction:column; gap:8px; }
+.skel-l { height:10px; border-radius:6px; background:var(--skel-line); }
+
+/* ── CONFIRM BAR ── */
+.confirm-bar {
+  position:fixed; bottom:0; left:0; right:0;
+  padding:18px 20px 16px;
+  background: var(--confirm-bar-bg);
+  z-index:100; transition: background 0.3s;
+}
+.confirm-btn {
+  width:100%; padding:15px; border:none; border-radius:12px;
+  background:linear-gradient(135deg, var(--gold), var(--amber));
+  color:#000; font-family:'Barlow',sans-serif;
+  font-size:15px; font-weight:700; cursor:pointer; transition:all 0.2s;
+  letter-spacing:.3px;
+}
+.confirm-btn:hover:not(:disabled) { opacity:.88; transform:translateY(-2px); box-shadow:0 12px 32px rgba(245,184,0,0.25); }
+.confirm-btn:disabled { opacity:.22; cursor:not-allowed; transform:none; box-shadow:none; }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+</style>
+</head>
+<body>
+
+<!-- ══ THEME SYNC — runs BEFORE paint, reads same key as dashboard & request ══ -->
+<script>
+  (function () {
+    const theme = localStorage.getItem('fuelx_theme') || 'light';
+    if (theme === 'dark') document.body.classList.add('dark');
+  })();
+</script>
+
+<!-- Navbar -->
+<div class="navbar">
+  <div class="nav-left">
+    <a href="request.html" class="back-btn">←</a>
+    <div class="logo">FUEL<span class="logo-x">X</span></div>
+  </div>
+  <div class="nav-city">Baramati</div>
+</div>
+
+<!-- GPS Banner -->
+<div class="gps-banner" id="gpsBanner">
+  <div class="gps-dot" id="gpsDot"></div>
+  <span id="gpsMsg">Detecting your GPS location…</span>
+</div>
+
+<!-- Summary Bar -->
+<div class="summary-bar">
+  <div class="chip">🚗 <b id="cVehicle">-</b></div>
+  <div class="chip">⛽ <b id="cFuel">-</b></div>
+  <div class="chip">📊 <b id="cQty">-</b> L</div>
+  <div class="chip">📍 <b id="cLoc">-</b></div>
+</div>
+
+<!-- Filter Tabs -->
+<div class="filter-tabs">
+  <button class="tab active" onclick="doFilter('All',this)">All Pumps</button>
+  <button class="tab" onclick="doFilter('Indian Oil',this)">
+    <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#002D72"/><circle cx="20" cy="20" r="15" fill="#CC0000"/><text x="20" y="18" font-family="Arial Black" font-size="6.5" fill="white" text-anchor="middle" font-weight="900">INDIAN</text><text x="20" y="26" font-family="Arial Black" font-size="5" fill="#FFD700" text-anchor="middle" font-weight="900">OIL</text></svg>
+    Indian Oil
+  </button>
+  <button class="tab" onclick="doFilter('HP',this)">
+    <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#003087"/><circle cx="20" cy="20" r="19" fill="none" stroke="#FFD700" stroke-width="2"/><text x="20" y="26" font-family="Arial Black" font-size="16" fill="white" text-anchor="middle" font-weight="900">HP</text></svg>
+    HP
+  </button>
+  <button class="tab" onclick="doFilter('Bharat Petroleum',this)">
+    <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#1B1B2F"/><circle cx="20" cy="20" r="13" fill="none" stroke="#FF6B00" stroke-width="3.5"/><circle cx="20" cy="20" r="7" fill="#FF6B00"/><circle cx="20" cy="20" r="3" fill="#FFD700"/></svg>
+    Bharat
+  </button>
+</div>
+
+<!-- Section Header -->
+<div class="section-hdr" id="sectionHdr">Locating pumps near you…</div>
+
+<!-- Skeleton -->
+<div class="skel-wrap" id="skelWrap"></div>
+
+<!-- Pump List -->
+<div class="pumps-list" id="pumpList" style="display:none"></div>
+
+<!-- Confirm Bar -->
+<div class="confirm-bar">
+  <button class="confirm-btn" id="confirmBtn" disabled>Select a Pump to Continue</button>
+</div>
+
+<script>
+var P        = new URLSearchParams(window.location.search);
+var vehicle  = P.get('vehicle')  || 'My Vehicle';
+var fuelType = P.get('fuel')     || 'Petrol';
+var quantity = P.get('qty')      || '1';
+var locStr   = P.get('location') || 'Baramati';
+
+document.getElementById('cVehicle').textContent = vehicle;
+document.getElementById('cFuel').textContent    = fuelType;
+document.getElementById('cQty').textContent     = quantity;
+document.getElementById('cLoc').textContent     = locStr.slice(0,20) + (locStr.length>20?'…':'');
+
+var BRAND_LOGO = {
+  'Indian Oil': '<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="iocl-bg" cx="50%" cy="40%" r="55%"><stop offset="0%" stop-color="#003580"/><stop offset="100%" stop-color="#001d4a"/></radialGradient></defs><circle cx="40" cy="40" r="38" fill="url(#iocl-bg)"/><circle cx="40" cy="40" r="29" fill="#CC0000"/><circle cx="40" cy="40" r="29" fill="none" stroke="#FFD700" stroke-width="1.8"/><circle cx="40" cy="40" r="38" fill="none" stroke="#FFD700" stroke-width="2"/><path d="M40 16 C37 20 34 23 36 27 C32 24 33 19 36 17 C34 22 37 25 40 22 C43 25 46 22 44 17 C47 19 48 24 44 27 C46 23 43 20 40 16Z" fill="#FFD700"/><text x="40" y="46" font-family="Arial Black,Arial" font-size="10.5" fill="white" text-anchor="middle" font-weight="900">INDIAN</text><text x="40" y="58" font-family="Arial Black,Arial" font-size="8" fill="#FFD700" text-anchor="middle" font-weight="900">OIL</text></svg>',
+  'HP': '<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="hp-bg" cx="40%" cy="35%" r="65%"><stop offset="0%" stop-color="#0047b3"/><stop offset="100%" stop-color="#00256e"/></radialGradient></defs><circle cx="40" cy="40" r="38" fill="url(#hp-bg)"/><circle cx="40" cy="40" r="35" fill="none" stroke="#FFD700" stroke-width="3.5"/><text x="40" y="51" font-family="Arial Black,Arial" font-size="30" fill="white" text-anchor="middle" font-weight="900" letter-spacing="-1">HP</text><text x="40" y="63" font-family="Arial,sans-serif" font-size="6" fill="rgba(255,215,0,.8)" text-anchor="middle" letter-spacing="1.5">HINDUSTAN</text></svg>',
+  'Bharat Petroleum': '<svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="bp-bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#232340"/><stop offset="100%" stop-color="#0d0d1f"/></radialGradient></defs><circle cx="40" cy="40" r="38" fill="url(#bp-bg)"/><circle cx="40" cy="40" r="30" fill="none" stroke="#FF6600" stroke-width="5"/><circle cx="40" cy="40" r="20" fill="#FF6600"/><circle cx="40" cy="40" r="12" fill="#FFD700"/><circle cx="40" cy="40" r="5" fill="#FF6600"/><text x="40" y="74" font-family="Arial Black,Arial" font-size="7" fill="#FF6600" text-anchor="middle" font-weight="900">BHARAT</text></svg>'
+};
+
+var RAW = [
+  { brand:'HP',               name:'S.R. Zagade Petroleum',      addr:'Baramati-Phaltan Road',  lat:18.1490, lng:74.5870, rating:4.8, status:'Open' },
+  { brand:'Indian Oil',       name:'Dhawan Patil KSK Petroleum', addr:'Katewadi Road',          lat:18.1528, lng:74.5812, rating:4.5, status:'Open' },
+  { brand:'Bharat Petroleum', name:'Janai Petroleum',            addr:'Gandhi Chowk',           lat:18.1520, lng:74.5796, rating:4.3, status:'Open' },
+  { brand:'Indian Oil',       name:'Krushna Petroleum',          addr:'Pune-Solapur Highway',   lat:18.1475, lng:74.5965, rating:4.2, status:'Open' },
+  { brand:'Indian Oil',       name:'Shivam Petroleum',           addr:'Market Yard',            lat:18.1553, lng:74.5850, rating:4.7, status:'Open' },
+  { brand:'HP',               name:'Shivlal Premchand HP',       addr:'Station Road',           lat:18.1505, lng:74.5775, rating:4.1, status:'Open' },
+  { brand:'Bharat Petroleum', name:'Shree Samarth Petroleum',    addr:'Adarsh Colony',          lat:18.1468, lng:74.5835, rating:4.2, status:'Open' },
+  { brand:'Indian Oil',       name:'Satav Petroleum',            addr:'Indapur Road',           lat:18.1440, lng:74.5910, rating:4.0, status:'Busy' },
+  { brand:'HP',               name:'Shivratna Petroleum',        addr:'Vidyanagar',             lat:18.1582, lng:74.5920, rating:3.9, status:'Busy' },
+  { brand:'Indian Oil',       name:'Mauli Petroleum',            addr:'Nimbalkar Nagar',        lat:18.1430, lng:74.5760, rating:4.1, status:'Open' },
+  { brand:'Bharat Petroleum', name:'Digvijay Petroleum',         addr:'Bhigwan Road',           lat:18.1395, lng:74.5875, rating:4.6, status:'Open' },
+  { brand:'Indian Oil',       name:'Krishna Gas Service',        addr:'Supa Road',              lat:18.1610, lng:74.5760, rating:4.4, status:'Open' },
+  { brand:'HP',               name:'Vitthal HP Petroleum',       addr:'MIDC Area',              lat:18.1350, lng:74.5820, rating:4.3, status:'Open' },
+  { brand:'Bharat Petroleum', name:'Balaji Petroleum',           addr:'Morgaon Road',           lat:18.1320, lng:74.5950, rating:4.0, status:'Open' },
+];
+
+var pumps = [];
+var selected = null;
+var curFilter = 'All';
+
+function km(la1,lo1,la2,lo2) {
+  var R=6371, dL=(la2-la1)*Math.PI/180, dN=(lo2-lo1)*Math.PI/180;
+  var a=Math.sin(dL/2)*Math.sin(dL/2)+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dN/2)*Math.sin(dN/2);
+  return +((R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))).toFixed(1));
+}
+
+function buildPumps(lat,lng) {
+  pumps = RAW.map(function(p){ return Object.assign({},p,{dist:km(lat,lng,p.lat,p.lng)}); })
+             .sort(function(a,b){ return a.dist-b.dist; });
+  document.getElementById('sectionHdr').textContent = pumps.length + ' Pumps · Sorted by Distance';
+  document.getElementById('skelWrap').style.display = 'none';
+  document.getElementById('pumpList').style.display = 'flex';
+  renderPumps(curFilter);
+}
+
+function setBanner(state,msg) {
+  document.getElementById('gpsBanner').className = 'gps-banner ' + state;
+  document.getElementById('gpsDot').className    = 'gps-dot';
+  document.getElementById('gpsMsg').textContent  = msg;
+}
+
+document.getElementById('skelWrap').innerHTML = [1,2,3,4,5].map(function(){
+  return '<div class="skel-card"><div class="skel-logo"></div><div class="skel-lines"><div class="skel-l" style="width:34%"></div><div class="skel-l" style="width:66%"></div><div class="skel-l" style="width:50%"></div></div></div>';
+}).join('');
+
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    function(pos){ buildPumps(pos.coords.latitude,pos.coords.longitude); setBanner('success','📍 GPS active — real distances from your location'); },
+    function(){ buildPumps(18.1524,74.5815); setBanner('fail','⚠️ Location denied — using Baramati city center'); },
+    { timeout:8000, maximumAge:60000, enableHighAccuracy:true }
+  );
+} else {
+  buildPumps(18.1524,74.5815);
+  setBanner('fail','⚠️ GPS unavailable — using Baramati city center');
+}
+
+function renderPumps(filter) {
+  var list = filter === 'All' ? pumps : pumps.filter(function(p){ return p.brand === filter; });
+  var nearestOpen = null;
+  for (var i=0; i<list.length; i++) { if (list[i].status === 'Open') { nearestOpen = list[i]; break; } }
+  if (!nearestOpen && list.length) nearestOpen = list[0];
+
+  document.getElementById('pumpList').innerHTML = list.length ? list.map(function(p,i){
+    var isN   = nearestOpen && p.name === nearestOpen.name;
+    var isSel = selected === p.name;
+    var statusClass = p.status === 'Busy' ? 'status-busy' : 'status-open';
+    return '<div class="pump-card'+(isSel?' selected':'')+(isN?' nearest-card':'')+'" onclick="selectPump(this,\''+p.name.replace(/'/g,"\\'")+'\')" style="animation:fadeUp .28s '+(i*.05)+'s both">'
+      + '<div class="logo-box">'+(BRAND_LOGO[p.brand]||'')+'</div>'
+      + '<div class="pump-info">'
+        + '<div class="brand-row"><span class="brand-name">'+p.brand+'</span>'+(isN?'<span class="nearest-pill">📍 NEAREST</span>':'')+'</div>'
+        + '<div class="pump-name">'+p.name+'</div>'
+        + '<div class="pump-addr">📍 '+p.addr+', Baramati</div>'
+        + '<div class="pump-meta">'
+          + '<span class="dist-pill'+(isN?' best':'')+'">🚗 '+p.dist+' km</span>'
+          + '<span class="rating">★ '+p.rating+'</span>'
+          + '<span class="'+statusClass+'">'+p.status+'</span>'
+        + '</div>'
+      + '</div>'
+      + '<div class="radio"></div>'
+    + '</div>';
+  }).join('')
+  : '<div style="padding:40px 0;text-align:center;color:var(--muted);font-size:14px;">No pumps found</div>';
+}
+
+function doFilter(brand,tab) {
+  curFilter = brand;
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  tab.classList.add('active');
+  renderPumps(brand);
+}
+
+function selectPump(card,name) {
+  selected = name;
+  document.querySelectorAll('.pump-card').forEach(function(c){ c.classList.remove('selected'); });
+  card.classList.add('selected');
+  var btn = document.getElementById('confirmBtn');
+  btn.disabled = false;
+  btn.textContent = 'Confirm — ' + name + ' →';
+}
+
+document.getElementById('confirmBtn').addEventListener('click', async function() {
+  if (!selected) return;
+  var p   = pumps.find(function(x){ return x.name === selected; });
+  var btn = document.getElementById('confirmBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Processing...';
+
+  try {
+    var response = await fetch('http://localhost:5000/api/select-pump', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ vehicle:vehicle, pump_name:selected })
+    });
+    var result = await response.json();
+    if (result.success) console.log('✅ Pump saved:', selected);
+  } catch(err) {
+    console.log('⚠️ Server unreachable:', err.message);
+  }
+
+  var params = new URLSearchParams({
+    vehicle:vehicle, fuel:fuelType, qty:quantity,
+    location:locStr, pump:selected,
+    brand:p?p.brand:'', addr:p?p.addr:'',
+    dist:p?p.dist:'', rating:p?p.rating:''
+  });
+  window.location.href = 'payment.html?' + params.toString();
+});
+</script>
+</body>
+</html>
